@@ -1,19 +1,12 @@
-import type { Metadata } from "next";
-import { Inter, Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import "../app/globals.css";
 import { LayoutContent } from "../components/LayoutContent";
+import type { Metadata } from 'next'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
-  preload: true,
-});
-
-const roboto = Roboto({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '700'],
-  display: 'swap',
-  preload: true,
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
@@ -45,12 +38,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru">
+    <html lang="en" className={`${inter.variable}`}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={`${inter.className} ${roboto.className} font-sans antialiased`}
+      <body className={`${inter.className} font-sans antialiased`}
         suppressHydrationWarning
       >
         <LayoutContent>{children}</LayoutContent>
