@@ -3,7 +3,10 @@ import { Inter } from "next/font/google";
 import "../app/globals.css";
 import { LayoutContent } from "../components/LayoutContent";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "HypeX",
@@ -34,8 +37,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
           rel="preload"
           href="/fonts/your-font.woff2"
@@ -44,8 +49,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body
-        className={`${inter.variable} font-sans antialiased`}
+      <body className={`${inter.className} font-sans antialiased`}
         suppressHydrationWarning
       >
         <LayoutContent>{children}</LayoutContent>
