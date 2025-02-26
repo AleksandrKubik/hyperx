@@ -1,8 +1,12 @@
-name = "x-boost"
+name = "your-project-name"
 type = "javascript"
 
 workers_dev = true
-compatibility_date = "2025-02-26"
+compatibility_date = "2024-02-26"
 
 [build]
 command = "npm run build"
+output_dir = ".next"
+
+[env.production]
+NODE_VERSION = "18.18.0"
