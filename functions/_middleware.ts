@@ -1,6 +1,10 @@
 import { Context } from '@cloudflare/workers-types'
 
-export const onRequest = async (context: Context) => {
+export interface Env {
+    // Определите переменные окружения здесь, если они нужны
+}
+
+export const onRequest = async (context: any) => {
     const response = await context.next()
 
     // Добавляем заголовки безопасности
