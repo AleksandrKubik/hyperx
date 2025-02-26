@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
@@ -49,7 +48,7 @@ export default function XBoostPage() {
                                     transition-all duration-700 transform
                                     ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
                         >
-                            Grow your X account <br />fast & organically
+                            <span className="text-blue-500">Grow your X account</span> <br />fast & organically
                         </h1>
                         <div
                             className={`transform transition-all duration-700
