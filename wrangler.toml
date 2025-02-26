@@ -10,3 +10,10 @@ output_dir = ".next"
 
 [env.production]
 NODE_VERSION = "18.18.0"
+
+[build.environment]
+NODE_VERSION = "20.11.0"
+
+[site]
+bucket = ".next/static"
+entry-point = "."

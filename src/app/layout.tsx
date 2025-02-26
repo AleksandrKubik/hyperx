@@ -3,11 +3,7 @@ import { Inter } from "next/font/google";
 import "../app/globals.css";
 import { LayoutContent } from "../components/LayoutContent";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: 'swap',
-});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "HypeX",
@@ -38,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className={inter.className}>
       <head>
         <link
           rel="preload"
