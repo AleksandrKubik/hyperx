@@ -1,9 +1,8 @@
 name = "hyperx"
-type = "javascript"
+pages_build_output_dir = "out"
 
 workers_dev = true
 compatibility_date = "2024-02-26"
-pages_build_output_dir = ".next/standalone"
 
 [build]
 command = "npm run build"
