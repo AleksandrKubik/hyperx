@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 const roboto = Roboto({
-  weight: ['400', '500', '700'],
   subsets: ['latin', 'cyrillic'],
+  weight: ['400', '700'],
   display: 'swap',
   preload: true,
 });
