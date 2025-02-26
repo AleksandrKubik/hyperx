@@ -7,6 +7,7 @@ const nextConfig = {
     },
     experimental: {
         optimizePackageImports: ['@heroicons/react'],
+        nodeCompat: true,
     },
     webpack: (config) => {
         config.optimization = {
