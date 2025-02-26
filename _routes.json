@@ -3,9 +3,11 @@
     "include": [
         "/*"
     ],
-    "exclude": [
-        "/api/*",
-        "/_next/static/*",
-        "/static/*"
+    "exclude": [],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
+        }
     ]
 }
