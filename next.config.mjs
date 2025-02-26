@@ -33,6 +33,14 @@ const nextConfig = {
         };
         return config;
     },
+    async rewrites() {
+        return [
+            {
+                source: '/:path*',
+                destination: '/:path*/index.html'
+            }
+        ]
+    }
 }
 
 export default nextConfig; 
