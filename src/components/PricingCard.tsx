@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link2, ArrowRight, Mail, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface PricingTier {
   replies: number;
@@ -35,10 +36,17 @@ const pricingTiers: PricingTier[] = [
   },
 ];
 
+interface PostData {
+  image?: string;
+  title?: string;
+  description?: string;
+  author?: string;
+}
+
 export default function PricingCardV2() {
   const router = useRouter();
   const [tweetUrl, setTweetUrl] = useState('');
-  const [postData, setPostData] = useState<any>(null);
+  const [postData, setPostData] = useState<PostData | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<number>(0);
   const [step, setStep] = useState(1);
   const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>('');
@@ -140,9 +148,11 @@ export default function PricingCardV2() {
                 {postData && (
                   <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
                     {postData.image && (
-                      <img
+                      <Image
                         src={postData.image}
                         alt="Post preview"
+                        width={300}
+                        height={128}
                         className="w-full h-32 object-cover rounded-lg mb-3"
                       />
                     )}

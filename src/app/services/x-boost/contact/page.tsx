@@ -70,13 +70,13 @@ export default function ContactPage() {
 
             if (response.ok) {
                 setSubmitSuccess(true);
-                // Очищаем форму
                 setContactMethod('');
                 setContactValue('');
             } else {
                 throw new Error('Failed to submit');
             }
-        } catch (err) {
+        } catch (error) {
+            console.error('Submission error:', error);
             setError('Failed to submit. Please try again.');
         } finally {
             setIsSubmitting(false);
