@@ -12,7 +12,7 @@ const ContactForm = () => {
         <div id="contact" className="max-w-2xl mx-auto mb-12 xs:mb-16 md:mb-20">
             <div className="max-w-3xl mx-auto text-center mb-8 xs:mb-12 md:mb-16">
                 <h2 className="text-3xl xs:text-4xl md:text-5xl font-bold mb-3 xs:mb-4">
-                    <span className="text-blue-500 drop-shadow-lg">
+                    <span className="text-[#1DA1F2] drop-shadow-lg">
                         Contact Me
                     </span>
                 </h2>

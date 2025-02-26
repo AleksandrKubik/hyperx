@@ -61,64 +61,83 @@ export default function HowItWorks() {
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const animationStarted = useRef(false);
 
   useEffect(() => {
+    // Полифилл для Safari
+    if (!('IntersectionObserver' in window)) {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !animationStarted.current) {
           setIsVisible(true);
-          observer.disconnect(); // Отключаем наблюдатель после первого срабатывания
+          animationStarted.current = true;
+          observer.disconnect();
         }
       },
-      { threshold: 0.5 } // Срабатывает, когда 50% секции видимо
+      {
+        threshold: 0.1, // Уменьшили порог для более раннего срабатывания
+        rootMargin: '50px' // Добавили отступ для более раннего срабатывания
+      }
     );
 
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+    // Резервный вариант для Safari
+    const timeoutId = setTimeout(() => {
+      if (!isVisible && !animationStarted.current) {
+        setIsVisible(true);
+        animationStarted.current = true;
       }
+    }, 1000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeoutId);
     };
   }, []);
 
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && !animationStarted.current) {
+      animationStarted.current = true;
       changePost();
       addComments();
     }
   }, [isVisible]);
 
   const addComments = () => {
-    let commentIndex = -1;
-    const commentInterval = setInterval(() => {
-      if (commentIndex < comments.length - 1) {
-        setTimeout(() => {
-          setVisibleComments((prev) => [...prev, comments[commentIndex]]);
-        }, 50); // Задержка 0.5 секунды перед добавлением комментарияё
-        commentIndex++;
-      } else {
-        clearInterval(commentInterval);
-      }
-    }, 100);  // Добавление комментариев каждую секунду
+    const totalComments = comments.length;
+    let currentIndex = 0;
 
-    return () => clearInterval(commentInterval);
+    const addNextComment = () => {
+      if (currentIndex < totalComments) {
+        setVisibleComments(prev => [...prev, comments[currentIndex]]);
+        currentIndex++;
+        requestAnimationFrame(() => setTimeout(addNextComment, 100));
+      }
+    };
+
+    requestAnimationFrame(addNextComment);
   };
 
   const changePost = () => {
-    let postIndex = 0;
-    const postInterval = setInterval(() => {
-      if (postIndex < posts.length - 1) {
-        setCurrentPostIndex((prevIndex) => (prevIndex + 1) % posts.length); // Меняем пост
-        postIndex++;
-      } else {
-        clearInterval(postInterval); // Останавливаем интервал, когда достигли последнего поста
-      }
-    }, 1200); // Смена поста каждые 0.625 секунд (5 секунд на 8 постов)
+    const totalPosts = posts.length;
+    let currentIndex = 0;
 
-    return () => clearInterval(postInterval);
+    const changeNextPost = () => {
+      if (currentIndex < totalPosts) {
+        setCurrentPostIndex(currentIndex);
+        currentIndex++;
+        requestAnimationFrame(() => setTimeout(changeNextPost, 1200));
+      }
+    };
+
+    requestAnimationFrame(changeNextPost);
   };
 
   return (
@@ -133,7 +152,7 @@ export default function HowItWorks() {
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-8 xs:mb-12 md:mb-16">
           <h2 className="text-3xl xs:text-4xl md:text-5xl font-bold mb-3 xs:mb-4">
-            <span className="text-blue-500 drop-shadow-lg">
+            <span className="text-[#1DA1F2] drop-shadow-lg">
               How it works
             </span>
           </h2>
@@ -186,16 +205,26 @@ export default function HowItWorks() {
               <img
                 src={posts[currentPostIndex]}
                 alt="Post"
-                className=" top-0 left-0 w-full transition-opacity duration-100"
-                style={{ opacity: 1, marginBottom: '2vh' }}
+                className="w-full transition-all duration-300 ease-in-out"
+                style={{
+                  opacity: 1,
+                  marginBottom: '2vh',
+                  transform: 'translateZ(0)', // Включаем аппаратное ускорение
+                  willChange: 'transform' // Оптимизация производительности
+                }}
               />
               {visibleComments.map((comment, idx) => (
                 <img
                   key={idx}
                   src={comment}
                   alt={`Comment ${idx + 1}`}
-                  className={`w-full transition-opacity mb-4 duration-100`}
-                  style={{ opacity: 0, animation: `0.5s ease ${idx}s normal forwards running fadeIn` }}
+                  className="w-full mb-4"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateZ(0)',
+                    willChange: 'transform, opacity',
+                    animation: `fadeIn 0.5s ease ${idx * 0.1}s forwards`
+                  }}
                 />
               ))}
             </div>
