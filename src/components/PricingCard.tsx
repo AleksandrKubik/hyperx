@@ -46,7 +46,7 @@ interface PostData {
 export default function PricingCardV2() {
   const router = useRouter();
   const [tweetUrl, setTweetUrl] = useState('');
-  const [postData, setPostData] = useState<PostData | null>(null);
+  const [postData] = useState<PostData | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<number>(0);
   const [step, setStep] = useState(1);
   const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>('');

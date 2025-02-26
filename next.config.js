@@ -23,7 +23,6 @@ const nextConfig = {
         }
         return config
     },
-    unstable_runtimeJS: true,
     async headers() {
         return [
             {

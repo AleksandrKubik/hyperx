@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, MessageSquare, Link2, ArrowRight } from 'lucide-react';
+import { Mail, MessageSquare, ArrowRight } from 'lucide-react';
 
 // Добавляем определение интерфейса и массива пакетов
 interface PricingTier {
@@ -19,7 +19,7 @@ const pricingTiers: PricingTier[] = [
     { replies: 150, price: 250, topTierReplies: 5 },
 ];
 
-export default function ContactPage() {
+function ContactForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>('');
@@ -229,5 +229,27 @@ export default function ContactPage() {
                 </div>
             </div>
         </section>
+    );
+}
+
+export default function ContactPage() {
+    return (
+        <Suspense fallback={
+            <section className="py-12 xs:py-16 md:py-20">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-3xl mx-auto">
+                        <div className="glass-card bg-black/40 backdrop-blur-xl p-4 xs:p-6 md:p-8 rounded-2xl border border-white/10">
+                            <div className="animate-pulse flex space-y-4 flex-col">
+                                <div className="h-4 bg-white/10 rounded w-3/4"></div>
+                                <div className="h-10 bg-white/10 rounded"></div>
+                                <div className="h-10 bg-white/10 rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }>
+            <ContactForm />
+        </Suspense>
     );
 } 
