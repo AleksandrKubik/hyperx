@@ -61,84 +61,47 @@ export default function HowItWorks() {
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const animationStarted = useRef(false);
 
   useEffect(() => {
-    // Полифилл для Safari
-    if (!('IntersectionObserver' in window)) {
-      setIsVisible(true);
-      return;
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !animationStarted.current) {
+        if (entry.isIntersecting) {
           setIsVisible(true);
-          animationStarted.current = true;
           observer.disconnect();
         }
       },
-      {
-        threshold: 0.1, // Уменьшили порог для более раннего срабатывания
-        rootMargin: '50px' // Добавили отступ для более раннего срабатывания
-      }
+      { threshold: 0.1 }
     );
 
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    // Резервный вариант для Safari
-    const timeoutId = setTimeout(() => {
-      if (!isVisible && !animationStarted.current) {
-        setIsVisible(true);
-        animationStarted.current = true;
-      }
-    }, 1000);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(timeoutId);
-    };
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    if (isVisible && !animationStarted.current) {
-      animationStarted.current = true;
-      changePost();
-      addComments();
-    }
+    if (!isVisible) return;
+
+    // Анимация постов
+    const postInterval = setInterval(() => {
+      setCurrentPostIndex(prev => (prev + 1) % posts.length);
+    }, 1200);
+
+    // Анимация комментариев
+    let commentIndex = 0;
+    const commentInterval = setInterval(() => {
+      if (commentIndex < comments.length) {
+        setVisibleComments(prev => [...prev, comments[commentIndex]]);
+        commentIndex++;
+      }
+    }, 100);
+
+    return () => {
+      clearInterval(postInterval);
+      clearInterval(commentInterval);
+    };
   }, [isVisible]);
-
-  const addComments = () => {
-    const totalComments = comments.length;
-    let currentIndex = 0;
-
-    const addNextComment = () => {
-      if (currentIndex < totalComments) {
-        setVisibleComments(prev => [...prev, comments[currentIndex]]);
-        currentIndex++;
-        requestAnimationFrame(() => setTimeout(addNextComment, 100));
-      }
-    };
-
-    requestAnimationFrame(addNextComment);
-  };
-
-  const changePost = () => {
-    const totalPosts = posts.length;
-    let currentIndex = 0;
-
-    const changeNextPost = () => {
-      if (currentIndex < totalPosts) {
-        setCurrentPostIndex(currentIndex);
-        currentIndex++;
-        requestAnimationFrame(() => setTimeout(changeNextPost, 1200));
-      }
-    };
-
-    requestAnimationFrame(changeNextPost);
-  };
 
   return (
     <section id="how-it-works" className="pb-12 xs:pb-16 md:pt-0 relative" ref={sectionRef}>
@@ -205,24 +168,18 @@ export default function HowItWorks() {
               <img
                 src={posts[currentPostIndex]}
                 alt="Post"
-                className="w-full transition-all duration-300 ease-in-out"
-                style={{
-                  opacity: 1,
-                  marginBottom: '2vh',
-                  transform: 'translateZ(0)', // Включаем аппаратное ускорение
-                  willChange: 'transform' // Оптимизация производительности
-                }}
+                className="w-full transition-all duration-300"
+                style={{ marginBottom: '2vh' }}
               />
               {visibleComments.map((comment, idx) => (
                 <img
                   key={idx}
                   src={comment}
                   alt={`Comment ${idx + 1}`}
-                  className="w-full mb-4"
+                  className="w-full mb-4 animate-fadeIn"
                   style={{
+                    animationDelay: `${idx * 0.1}s`,
                     opacity: 0,
-                    transform: 'translateZ(0)',
-                    willChange: 'transform, opacity',
                     animation: `fadeIn 0.5s ease ${idx * 0.1}s forwards`
                   }}
                 />
