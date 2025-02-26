@@ -7,6 +7,7 @@ pages_build_output_dir = ".next/standalone"
 
 [build]
 command = "npm run build"
+output_directory = "out"
 
 [env.production]
 NODE_VERSION = "18.18.0"

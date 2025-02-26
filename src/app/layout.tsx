@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Roboto } from "next/font/google";
 import "../app/globals.css";
 import { LayoutContent } from "../components/LayoutContent";
 
 const inter = Inter({
-  subsets: ['latin'],
+  subsets: ['latin', 'cyrillic'],
   display: 'swap',
+  preload: true,
+});
+
+const roboto = Roboto({
+  weight: ['400', '500', '700'],
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -37,19 +45,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
-          rel="preload"
-          href="/fonts/your-font.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
       </head>
-      <body className={`${inter.className} font-sans antialiased`}
+      <body className={`${inter.className} ${roboto.className} font-sans antialiased`}
         suppressHydrationWarning
       >
         <LayoutContent>{children}</LayoutContent>
