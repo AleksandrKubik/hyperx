@@ -10,8 +10,11 @@ export default function XBoostPage() {
     const [showTitle, setShowTitle] = useState(false);
     const [showDescription, setShowDescription] = useState(false);
     const [scrollY, setScrollY] = useState(0);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        setIsClient(true);
+
         setTimeout(() => {
             setIsTransitioning(false);
             setTimeout(() => {
@@ -22,16 +25,39 @@ export default function XBoostPage() {
         }, 400);
 
         const handleScroll = () => {
-            setScrollY(window.scrollY);
+            if (window) {
+                setScrollY(window.scrollY);
+            }
         };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        // Добавляем проверку на существование window
+        if (typeof window !== 'undefined') {
+            window.addEventListener('scroll', handleScroll);
+            // Вызываем один раз для инициализации
+            handleScroll();
+        }
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('scroll', handleScroll);
+            }
+        };
     }, []);
 
-    // Вычисляем opacity и blur на основе позиции скролла
-    const opacity = Math.max(1 - scrollY / 500, 0.2); // Минимальная прозрачность 0.2
-    const blur = Math.min(scrollY / 100, 8); // Максимальное размытие 8px
+    // Базовые стили для серверного рендеринга
+    const defaultStyle = {
+        opacity: 1,
+        filter: 'blur(0px)',
+        transform: 'scale(1)',
+    };
+
+    // Стили для клиентского рендеринга
+    const clientStyle = isClient ? {
+        opacity: Math.max(1 - scrollY / 500, 0.2),
+        filter: `blur(${Math.min(scrollY / 100, 8)}px)`,
+        transform: `scale(${1 + Math.min(scrollY / 100, 8) / 16})`,
+        willChange: 'opacity, filter, transform'
+    } : defaultStyle;
 
     return (
         <motion.div
@@ -42,12 +68,10 @@ export default function XBoostPage() {
         >
             <main className="min-h-screen relative overflow-hidden">
                 {/* Анимированная иконка */}
-                <div className={`fixed transition-all duration-1000 ease-out`}
-                    style={{
-                        opacity: opacity,
-                        filter: `blur(${blur}px)`,
-                        transform: `scale(${1 + blur / 32})`, // Небольшое увеличение при размытии
-                    }}>
+                <div
+                    className="fixed transition-all duration-1000 ease-out"
+                    style={clientStyle}
+                >
                     <div className="w-screen h-[1200px] md:h-[800px] lg:h-[1000px]">
                         <XIconLarge />
                     </div>

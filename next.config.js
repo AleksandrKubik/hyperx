@@ -22,7 +22,21 @@ const nextConfig = {
             }
         }
         return config
-    }
+    },
+    unstable_runtimeJS: true,
+    async headers() {
+        return [
+            {
+                source: '/services/x-boost',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'no-store, must-revalidate',
+                    },
+                ],
+            },
+        ];
+    },
 };
 
 module.exports = nextConfig;
