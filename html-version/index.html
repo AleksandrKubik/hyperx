@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HypeX - Boost your X presence</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/tailwind.css">
+    <link rel="stylesheet" href="styles/main.css">
+    
+    <!-- Preload Images -->
+    <link rel="preload" as="image" href="assets/images/noise.png">
+    <link rel="preload" as="image" href="assets/images/logo.svg">
+    
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black min-h-screen">
+    <!-- Flash Sale Banner -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0C1F3F]/90 via-[#1DA1F2]/90 to-[#0C1F3F]/90 backdrop-blur-md"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        <div class="relative">
+            <div class="container mx-auto px-3 xs:px-4 py-2">
+                <div class="flex flex-col xs:flex-row items-center justify-center gap-2 xs:gap-4">
+                    <div class="text-white/90 text-xs xs:text-sm font-medium flex items-center gap-1.5 xs:gap-2 text-center xs:text-left">
+                        <span class="text-white font-bold whitespace-nowrap">FLASH SALE:</span>
+                        <span class="whitespace-nowrap">All services are</span>
+                        <span class="text-white font-bold bg-[#1DA1F2] px-1.5 xs:px-2 py-0.5 rounded whitespace-nowrap">30% OFF</span>
+                    </div>
+                    <div class="flex items-center gap-2 xs:gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 xs:w-4 xs:h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span class="text-white font-mono text-xs xs:text-sm" id="sale-timer">04:00:00</span>
+                        </div>
+                        <button class="px-2.5 xs:px-3 py-1 bg-white text-[#1DA1F2] rounded-full text-xs xs:text-sm font-bold hover:bg-white/90 transition-all whitespace-nowrap">
+                            Get Offer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 -z-50 overflow-hidden">
+        <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-[#1DA1F2]/20 blur-[120px] rotate-12 opacity-30"></div>
+        <div class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-[#0C1F3F]/20 blur-[120px] -rotate-12 opacity-30"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="relative min-h-screen flex flex-col">
+            <!-- Hero Background Effects -->
+            <div class="absolute inset-0 -z-10 overflow-hidden">
+                <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#1DA1F2]/30 rounded-full blur-3xl opacity-70 animate-pulse"></div>
+                <div class="absolute -top-20 right-1/4 w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-3xl opacity-60 animate-pulse delay-700"></div>
+                <div class="absolute bottom-0 right-1/3 w-[700px] h-[700px] bg-[#0C1F3F]/20 rounded-full blur-3xl opacity-60 animate-pulse delay-1000"></div>
+            </div>
+
+            <div class="flex-1 pt-16 xs:pt-20">
+                <div class="container mx-auto px-4 pt-4 xs:pt-6 md:pt-8 pb-12 xs:pb-16 md:pb-20">
+                    <div class="max-w-5xl mx-auto">
+                        <!-- Logo -->
+                        <div class="flex flex-col items-center gap-2 mb-8 xs:mb-12">
+                            <img src="assets/images/logo.svg" alt="HypeX Logo" class="w-40 xs:w-48 sm:w-56 md:w-60 h-auto logo-animation" />
+                            <p class="text-white/80 text-sm xs:text-base font-medium">Press X to win</p>
+                        </div>
+
+                        <!-- Hero Content -->
+                        <div class="text-center mb-8 xs:mb-12">
+                            <h1 class="text-4xl xs:text-5xl sm:text-6xl md:text-7xl ipad:text-8xl font-bold mb-4 xs:mb-6">
+                                <span class="text-[#1DA1F2] drop-shadow-lg">
+                                    Grow your X account
+                                </span>
+                                <br>
+                                <span class="bg-gradient-to-r from-white via-white to-white/90 bg-clip-text text-transparent">
+                                    fast & organically.
+                                </span>
+                            </h1>
+                            <p class="text-base xs:text-lg sm:text-xl md:text-2xl text-white/80 mb-6 xs:mb-8 max-w-3xl mx-auto px-2">
+                                Get real, organic replies and followers. No bots — just authentic engagement 
+                                to make your profile stand out.
+                            </p>
+                        </div>
+
+                        <!-- CTA Card -->
+                        <div class="glass-card bg-black/40 backdrop-blur-xl p-6 xs:p-8 rounded-2xl border border-white/10 max-w-2xl mx-auto">
+                            <button class="group w-full px-6 xs:px-8 py-3 xs:py-4 bg-[#1DA1F2] rounded-xl text-white font-bold text-base xs:text-lg flex items-center justify-center gap-2 hover:bg-[#1A91DA] transition-all shadow-xl shadow-[#1DA1F2]/20 hover:shadow-[#1DA1F2]/30 hover:scale-105 mb-4 xs:mb-6">
+                                Get Boost
+                                <svg class="w-5 h-5 xs:w-6 xs:h-6 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+
+                            <!-- Benefits -->
+                            <div class="grid grid-cols-1 xs:grid-cols-3 gap-3 xs:gap-4">
+                                <div class="flex items-center justify-center gap-2 text-white/70">
+                                    <svg class="w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                    <span class="text-xs xs:text-sm">Increase Credibility</span>
+                                </div>
+                                <div class="flex items-center justify-center gap-2 text-white/70">
+                                    <svg class="w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                    <span class="text-xs xs:text-sm">Lowest Prices</span>
+                                </div>
+                                <div class="flex items-center justify-center gap-2 text-white/70">
+                                    <svg class="w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                    <span class="text-xs xs:text-sm">Faster Growth</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other sections will be added here -->
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/timer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

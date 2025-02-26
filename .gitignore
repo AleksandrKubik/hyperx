@@ -1,0 +1,9 @@
+# Local Netlify folder
+.netlify
+
+# Убедитесь, что следующие файлы и папки игнорируются
+node_modules/
+.next/
+.env
+.env.local
+.DS_Store

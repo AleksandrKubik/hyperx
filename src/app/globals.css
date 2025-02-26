@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+  --primary: #1DA1F2;
+  --secondary: #0C1F3F;
+  --muted: rgba(255, 255, 255, 0.7);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.93));
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+section {
+  background: transparent;
+}
+
+main {
+  background: transparent;
+}
+
+@layer base {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-light tracking-tight;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#1DA1F2] to-[#0C1F3F];
+  }
+
+  .primary-button {
+    @apply px-6 py-3 bg-[#1DA1F2] hover:bg-[#1A91DA] text-white rounded-full transition-all font-medium shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30;
+  }
+
+  .glass-input {
+    @apply bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#1DA1F2]/50;
+  }
+
+  .neo-button {
+    @apply relative overflow-hidden transition-all duration-300;
+  }
+
+  .neo-button::before {
+    @apply content-[''] absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  }
+
+  .neo-button:hover::before {
+    @apply opacity-100;
+  }
+
+  .boost-button {
+    @apply relative px-10 py-4 rounded-full text-white text-lg font-medium transition-all duration-300 shadow-lg;
+    background: linear-gradient(165deg,
+        rgba(29, 161, 242, 0.2),
+        rgba(10, 24, 37, 0.95),
+        rgba(12, 31, 63, 0.9));
+    box-shadow: 0 4px 20px rgba(29, 161, 242, 0.2),
+      inset 0 2px 20px rgba(29, 161, 242, 0.1);
+  }
+
+  .boost-button::before {
+    @apply content-[''] absolute inset-0 rounded-full opacity-0 transition-opacity duration-300;
+    background: radial-gradient(circle at center,
+        rgba(29, 161, 242, 0.2) 0%,
+        transparent 70%);
+  }
+
+  .boost-button:hover {
+    background: linear-gradient(165deg,
+        rgba(29, 161, 242, 0.3),
+        rgba(10, 24, 37, 0.97),
+        rgba(12, 31, 63, 0.95));
+    box-shadow: 0 4px 25px rgba(29, 161, 242, 0.3),
+      inset 0 2px 20px rgba(29, 161, 242, 0.2);
+  }
+
+  .boost-button:hover::before {
+    @apply opacity-100;
+  }
+
+  .boost-button:active {
+    transform: translateY(1px);
+  }
+}
+
+/* Добавляем стили для 3D эффекта */
+.icon-3d {
+  filter: drop-shadow(0px 8px 24px rgba(0, 0, 0, 0.15));
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  filter: drop-shadow(0px 12px 24px rgba(0, 0, 0, 0.2));
+}
+
+.dark-glass {
+  background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+  box-shadow: 20px 20px 60px #1a1a1a,
+    -20px -20px 60px #2a2a2a;
+}
+
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  filter: brightness(1.2);
+}
+
+/* Добавляем новые утилиты */
+.glow-primary {
+  filter: drop-shadow(0 0 20px rgba(29, 161, 242, 0.3));
+}
+
+.glow-white {
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+}
+
+.glow-red {
+  filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.3));
+}
+
+/* Анимации для кнопок */
+@keyframes buttonGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(29, 161, 242, 0.2),
+      inset 0 2px 20px rgba(29, 161, 242, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 4px 30px rgba(29, 161, 242, 0.4),
+      inset 0 2px 30px rgba(29, 161, 242, 0.2);
+  }
+}
+
+.animate-button-glow {
+  animation: buttonGlow 3s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

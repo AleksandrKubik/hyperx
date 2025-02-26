@@ -1,0 +1,8 @@
+name = "x-boost"
+type = "javascript"
+
+workers_dev = true
+compatibility_date = "2025-02-26"
+
+[build]
+command = "npm run build"
