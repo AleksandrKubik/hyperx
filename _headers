@@ -5,4 +5,8 @@
   Permissions-Policy: document-domain=()
   Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin 
+  Cross-Origin-Resource-Policy: same-origin
+  Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-ancestors 'none';
+
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex 

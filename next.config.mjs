@@ -40,7 +40,8 @@ const nextConfig = {
                 destination: '/:path*/index.html'
             }
         ]
-    }
+    },
+    trailingSlash: false
 }
 
 export default nextConfig; 
