@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
-    "lint": "next lint --dir src",
+    "lint": "next lint",
     "lint:fix": "next lint --dir src --fix",
     "pages:build": "npx @cloudflare/next-on-pages"
   },

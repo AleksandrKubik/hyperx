@@ -1,43 +1,35 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
+    output: 'standalone',
+    distDir: '.next',
     images: {
         unoptimized: true,
     },
     experimental: {
         optimizePackageImports: ['@heroicons/react'],
     },
-    webpack: (config, { isServer }) => {
-        if (!isServer) {
-            config.optimization = {
-                ...config.optimization,
-                splitChunks: {
-                    chunks: 'all',
-                    minSize: 20000,
-                    maxSize: 24000000,
-                    cacheGroups: {
-                        default: false,
-                        vendors: false,
-                        commons: {
-                            name: 'commons',
-                            chunks: 'all',
-                            minChunks: 2,
-                        },
-                        lib: {
-                            test: /[\\/]node_modules[\\/]/,
-                            name(module) {
-                                const packageName = module.context.match(
-                                    /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-                                )[1];
-                                return `npm.${packageName.replace('@', '')}`;
-                            },
-                            chunks: 'all',
-                            minChunks: 1,
+    webpack: (config) => {
+        config.optimization = {
+            ...config.optimization,
+            minimize: true,
+            moduleIds: 'deterministic',
+            splitChunks: {
+                chunks: 'all',
+                maxInitialRequests: Infinity,
+                minSize: 0,
+                cacheGroups: {
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name(module) {
+                            const packageName = module.context.match(
+                                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                            )[1];
+                            return `vendor.${packageName.replace('@', '')}`;
                         },
                     },
                 },
-            };
-        }
+            },
+        };
         return config;
     },
 }

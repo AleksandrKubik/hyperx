@@ -3,10 +3,10 @@ type = "javascript"
 
 workers_dev = true
 compatibility_date = "2024-02-26"
+pages_build_output_dir = ".next/standalone"
 
 [build]
 command = "npm run build"
-output_dir = ".next"
 
 [env.production]
 NODE_VERSION = "18.18.0"
@@ -15,7 +15,7 @@ NODE_VERSION = "18.18.0"
 NODE_VERSION = "20.11.0"
 
 [site]
-bucket = "out"
+bucket = ".next/static"
 entry-point = "."
 
 [build.upload]
