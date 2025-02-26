@@ -4,8 +4,14 @@ export interface Env {
     // Определите переменные окружения здесь, если они нужны
 }
 
-export const onRequest = async (context: any) => {
-    const response = await context.next()
+interface RequestContext {
+    request: Request;
+    next: () => Promise<Response>;
+    env: Env;
+}
+
+export const onRequest = async ({ request, next }: RequestContext) => {
+    const response = await next()
 
     // Добавляем заголовки безопасности
     response.headers.set('X-Frame-Options', 'DENY')
@@ -16,7 +22,7 @@ export const onRequest = async (context: any) => {
         "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-ancestors 'none'")
 
     // Блокируем индексацию тестового домена
-    if (context.request.url.includes('.pages.dev')) {
+    if (request.url.includes('.pages.dev')) {
         response.headers.set('X-Robots-Tag', 'noindex')
     }
 
