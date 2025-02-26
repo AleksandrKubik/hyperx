@@ -39,9 +39,9 @@ const features = [
   }
 ];
 
-export default function FeaturesV2() {
+export default function Features() {
   return (
-    <section id="features" className="pt-0 xs:pt-16 md:pt-20 relative ">
+    <section id="features" className="pt-0 xs:pt-16 md:pt-0 relative ">
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#1DA1F2]/20 rounded-full blur-3xl opacity-50 animate-pulse" />

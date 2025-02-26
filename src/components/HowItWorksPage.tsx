@@ -35,7 +35,7 @@ const steps = [
 
 export default function HowItWorksPage() {
   return (
-    <section className="pb-4 xs:py-16 md:py-20 relative overflow-hidden">
+    <section className="pb-4 xs:py-16 md:py-20 relative">
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#1DA1F2]/20 rounded-full blur-3xl opacity-50 animate-pulse" />
@@ -46,7 +46,7 @@ export default function HowItWorksPage() {
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-8 xs:mb-12 md:mb-16">
           <h2 className="text-3xl xs:text-4xl md:text-5xl font-bold mb-3 xs:mb-4">
-            <span className="text-[#1DA1F2] drop-shadow-lg">
+            <span className="text-blue-500 drop-shadow-lg">
               How it works
             </span>
           </h2>

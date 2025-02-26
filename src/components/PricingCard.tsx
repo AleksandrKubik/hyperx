@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link2, ArrowRight, Mail, MessageSquare } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface PricingTier {
   replies: number;
@@ -35,12 +36,15 @@ const pricingTiers: PricingTier[] = [
 ];
 
 export default function PricingCardV2() {
+  const router = useRouter();
   const [tweetUrl, setTweetUrl] = useState('');
-  const [selectedPackage, setSelectedPackage] = useState<number | null>(null);
+  const [postData, setPostData] = useState<any>(null);
+  const [selectedPackage, setSelectedPackage] = useState<number>(0);
   const [step, setStep] = useState(1);
   const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>('');
   const [contactValue, setContactValue] = useState('');
   const [error, setError] = useState('');
+
 
   const handleSubmitStep1 = () => {
     if (!tweetUrl) {
@@ -53,17 +57,18 @@ export default function PricingCardV2() {
     }
 
     // Проверка URL на соответствие сервисам
-    const isXService = /x\.com/.test(tweetUrl); // Проверка на X
-    const isTelegramService = /t\.me|telegram\.org/.test(tweetUrl); // Проверка на Telegram
-    const isYouTubeService = /youtube\.com|youtu\.be/.test(tweetUrl); // Проверка на YouTube
+    const isXService = /x\.com/.test(tweetUrl);
+    const isTelegramService = /t\.me|telegram\.org/.test(tweetUrl);
+    const isYouTubeService = /youtube\.com|youtu\.be/.test(tweetUrl);
 
     if (!isXService && !isTelegramService && !isYouTubeService) {
-      setError('Please enter a valid URL for X, Telegram, or YouTube');
+      setError('Please enter a valid URL');
       return;
     }
 
     setError('');
-    setStep(2);
+    // Перенаправляем на страницу контактной информации с параметрами
+    router.push(`/services/x-boost/contact?url=${encodeURIComponent(tweetUrl)}&package=${selectedPackage}`);
   };
 
   const handleSubmitStep2 = () => {
@@ -95,7 +100,7 @@ export default function PricingCardV2() {
         {/* Heading */}
         <div className="max-w-3xl mx-auto text-center mb-8 xs:mb-12">
           <h2 className="text-3xl xs:text-4xl md:text-5xl font-bold mb-3 xs:mb-4">
-            <span className="text-[#1DA1F2] drop-shadow-lg">
+            <span className="text-blue-500 drop-shadow-lg">
               Boost your tweet
             </span>
           </h2>
@@ -111,6 +116,12 @@ export default function PricingCardV2() {
               <>
                 {/* URL Input */}
                 <div className="mb-6 xs:mb-8">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
+                    <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
+                      Paste a link to your tweet
+                    </div>
+                  </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                       <Link2 className="w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2]" />
@@ -125,9 +136,36 @@ export default function PricingCardV2() {
                   </div>
                 </div>
 
+                {/* Preview Card */}
+                {postData && (
+                  <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                    {postData.image && (
+                      <img
+                        src={postData.image}
+                        alt="Post preview"
+                        className="w-full h-32 object-cover rounded-lg mb-3"
+                      />
+                    )}
+                    {postData.title && (
+                      <h3 className="text-white text-sm font-medium mb-1">{postData.title}</h3>
+                    )}
+                    {postData.description && (
+                      <p className="text-white/70 text-xs">{postData.description}</p>
+                    )}
+                    {postData.author && (
+                      <div className="text-[#1DA1F2] text-xs mt-2">@{postData.author}</div>
+                    )}
+                  </div>
+                )}
+
                 {/* Package Selection */}
                 <div className="space-y-2 xs:space-y-3">
-                  <div className="text-xs xs:text-sm font-medium text-white/80 mb-3 xs:mb-4">CHOOSE PACK</div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
+                    <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
+                      Choose Pack
+                    </div>
+                  </div>
 
                   {pricingTiers.map((tier, index) => (
                     <label
@@ -183,87 +221,96 @@ export default function PricingCardV2() {
             ) : (
               <>
                 {/* Step 2: Contact Details */}
-                <div className="mb-6">
-                  <div className="flex items-center gap-2 text-white/70 mb-2 text-xs xs:text-sm">
-                    <Link2 className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-[#1DA1F2]" />
-                    <span>Tweet URL:</span>
-                    <span className="text-white truncate">{tweetUrl}</span>
-                  </div>
-                  {selectedTier && (
-                    <div className="flex items-center gap-2 text-white/70 text-xs xs:text-sm">
-                      <span>Selected package:</span>
-                      <span className="text-white">
-                        {selectedTier.replies} Replies + Likes
-                        {selectedTier.topTierReplies &&
-                          ` + ${selectedTier.topTierReplies} Top Tier Replies`
-                        }
-                        {` ($${selectedTier.price})`}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
                 <div className="space-y-4 xs:space-y-6">
-                  <div className="text-xs xs:text-sm font-medium text-white/80">CONTACT DETAILS</div>
-
-                  {/* Contact Method Selection */}
-                  <div className="grid grid-cols-2 gap-3 xs:gap-4">
-                    <button
-                      onClick={() => setContactMethod('email')}
-                      className={`flex items-center justify-center gap-2 xs:gap-3 p-3 xs:p-4 rounded-xl transition-all ${contactMethod === 'email'
-                        ? 'bg-[#1DA1F2]/20 border-[#1DA1F2]/50 text-white'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
-                        } border`}
-                    >
-                      <Mail className="w-4 h-4 xs:w-5 xs:h-5" />
-                      <span className="text-sm xs:text-base">Email</span>
-                    </button>
-                    <button
-                      onClick={() => setContactMethod('telegram')}
-                      className={`flex items-center justify-center gap-2 xs:gap-3 p-3 xs:p-4 rounded-xl transition-all ${contactMethod === 'telegram'
-                        ? 'bg-[#1DA1F2]/20 border-[#1DA1F2]/50 text-white'
-                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
-                        } border`}
-                    >
-                      <MessageSquare className="w-4 h-4 xs:w-5 xs:h-5" />
-                      <span className="text-sm xs:text-base">Telegram</span>
-                    </button>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
+                    <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
+                      Contact Details
+                    </div>
                   </div>
 
-                  {/* Contact Input */}
-                  {contactMethod && (
-                    <div>
-                      <input
-                        type={contactMethod === 'email' ? 'email' : 'text'}
-                        placeholder={contactMethod === 'email' ? 'Enter your email' : 'Enter your Telegram handle'}
-                        className="w-full px-4 py-2.5 xs:py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:border-[#1DA1F2]/30 text-sm xs:text-base"
-                        value={contactValue}
-                        onChange={(e) => setContactValue(e.target.value)}
-                      />
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 text-white/70 mb-2 text-xs xs:text-sm">
+                      <Link2 className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-[#1DA1F2]" />
+                      <span>Tweet URL:</span>
+                      <span className="text-white truncate">{tweetUrl}</span>
                     </div>
-                  )}
+                    {selectedTier && (
+                      <div className="flex items-center gap-2 text-white/70 text-xs xs:text-sm">
+                        <span>Selected package:</span>
+                        <span className="text-white">
+                          {selectedTier.replies} Replies + Likes
+                          {selectedTier.topTierReplies &&
+                            ` + ${selectedTier.topTierReplies} Top Tier Replies`
+                          }
+                          {` ($${selectedTier.price})`}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-                  {/* Error Message */}
-                  {error && (
-                    <div className="text-red-500 text-xs xs:text-sm">{error}</div>
-                  )}
+                  <div className="space-y-4 xs:space-y-6">
+                    <div className="text-xs xs:text-sm font-medium text-white/80">CONTACT DETAILS</div>
 
-                  {/* Submit Button */}
-                  <button
-                    onClick={handleSubmitStep2}
-                    className="w-full group px-6 xs:px-8 py-3 xs:py-4 bg-[#1DA1F2] rounded-xl text-white font-bold text-sm xs:text-base flex items-center justify-center gap-2 hover:bg-[#1A91DA] transition-all shadow-xl shadow-[#1DA1F2]/20 hover:shadow-[#1DA1F2]/30"
-                  >
-                    Send Request
-                    <ArrowRight className="w-4 h-4 xs:w-5 xs:h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                    {/* Contact Method Selection */}
+                    <div className="grid grid-cols-2 gap-3 xs:gap-4">
+                      <button
+                        onClick={() => setContactMethod('email')}
+                        className={`flex items-center justify-center gap-2 xs:gap-3 p-3 xs:p-4 rounded-xl transition-all ${contactMethod === 'email'
+                          ? 'bg-[#1DA1F2]/20 border-[#1DA1F2]/50 text-white'
+                          : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                          } border`}
+                      >
+                        <Mail className="w-4 h-4 xs:w-5 xs:h-5" />
+                        <span className="text-sm xs:text-base">Email</span>
+                      </button>
+                      <button
+                        onClick={() => setContactMethod('telegram')}
+                        className={`flex items-center justify-center gap-2 xs:gap-3 p-3 xs:p-4 rounded-xl transition-all ${contactMethod === 'telegram'
+                          ? 'bg-[#1DA1F2]/20 border-[#1DA1F2]/50 text-white'
+                          : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                          } border`}
+                      >
+                        <MessageSquare className="w-4 h-4 xs:w-5 xs:h-5" />
+                        <span className="text-sm xs:text-base">Telegram</span>
+                      </button>
+                    </div>
 
-                  {/* Back Button */}
-                  <button
-                    onClick={() => setStep(1)}
-                    className="w-full px-6 xs:px-8 py-3 xs:py-4 bg-transparent border border-white/10 rounded-xl text-white/70 font-medium text-sm xs:text-base hover:bg-white/5 transition-all"
-                  >
-                    Back to packages
-                  </button>
+                    {/* Contact Input */}
+                    {contactMethod && (
+                      <div>
+                        <input
+                          type={contactMethod === 'email' ? 'email' : 'text'}
+                          placeholder={contactMethod === 'email' ? 'Enter your email' : 'Enter your Telegram handle'}
+                          className="w-full px-4 py-2.5 xs:py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:border-[#1DA1F2]/30 text-sm xs:text-base"
+                          value={contactValue}
+                          onChange={(e) => setContactValue(e.target.value)}
+                        />
+                      </div>
+                    )}
+
+                    {/* Error Message */}
+                    {error && (
+                      <div className="text-red-500 text-xs xs:text-sm">{error}</div>
+                    )}
+
+                    {/* Submit Button */}
+                    <button
+                      onClick={handleSubmitStep2}
+                      className="w-full group px-6 xs:px-8 py-3 xs:py-4 bg-[#1DA1F2] rounded-xl text-white font-bold text-sm xs:text-base flex items-center justify-center gap-2 hover:bg-[#1A91DA] transition-all shadow-xl shadow-[#1DA1F2]/20 hover:shadow-[#1DA1F2]/30"
+                    >
+                      Send Request
+                      <ArrowRight className="w-4 h-4 xs:w-5 xs:h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+
+                    {/* Back Button */}
+                    <button
+                      onClick={() => setStep(1)}
+                      className="w-full px-6 xs:px-8 py-3 xs:py-4 bg-transparent border border-white/10 rounded-xl text-white/70 font-medium text-sm xs:text-base hover:bg-white/5 transition-all"
+                    >
+                      Back to packages
+                    </button>
+                  </div>
                 </div>
               </>
             )}

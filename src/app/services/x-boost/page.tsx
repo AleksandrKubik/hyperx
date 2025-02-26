@@ -9,6 +9,7 @@ export default function XBoostPage() {
     const [isTransitioning, setIsTransitioning] = useState(true);
     const [showTitle, setShowTitle] = useState(false);
     const [showDescription, setShowDescription] = useState(false);
+    const [scrollY, setScrollY] = useState(0);
 
     useEffect(() => {
         setTimeout(() => {
@@ -19,7 +20,18 @@ export default function XBoostPage() {
                 setShowContent(true);
             }, 400);
         }, 400);
+
+        const handleScroll = () => {
+            setScrollY(window.scrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Вычисляем opacity и blur на основе позиции скролла
+    const opacity = Math.max(1 - scrollY / 500, 0.2); // Минимальная прозрачность 0.2
+    const blur = Math.min(scrollY / 100, 8); // Максимальное размытие 8px
 
     return (
         <motion.div
@@ -30,7 +42,12 @@ export default function XBoostPage() {
         >
             <main className="min-h-screen relative overflow-hidden">
                 {/* Анимированная иконка */}
-                <div className={`fixed transition-all duration-1000 ease-out`}>
+                <div className={`fixed transition-all duration-1000 ease-out`}
+                    style={{
+                        opacity: opacity,
+                        filter: `blur(${blur}px)`,
+                        transform: `scale(${1 + blur / 32})`, // Небольшое увеличение при размытии
+                    }}>
                     <div className="w-screen h-[1200px] md:h-[800px] lg:h-[1000px]">
                         <XIconLarge />
                     </div>

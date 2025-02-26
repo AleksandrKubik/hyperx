@@ -6,7 +6,7 @@ export default function TestFlightCard() {
     return (
         <div id="test-flight" className="mt-8 xs:mt-12 md:mt-16 max-w-3xl mx-auto">
             <div className="glass-card bg-black/40 backdrop-blur-xl p-4 xs:p-6 md:p-8 rounded-2xl border border-white/10 text-center">
-                <h3 className="text-lg xs:text-xl md:text-2xl font-bold text-[#1DA1F2] mb-2 xs:mb-3 md:mb-4">
+                <h3 className="text-lg xs:text-xl md:text-2xl font-bold text-blue-500 mb-2 xs:mb-3 md:mb-4">
                     Test Flight Available
                 </h3>
                 <p className="text-sm xs:text-base text-white/70 mb-4 xs:mb-5 md:mb-6">

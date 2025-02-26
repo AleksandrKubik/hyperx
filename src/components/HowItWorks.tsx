@@ -122,7 +122,7 @@ export default function HowItWorks() {
   };
 
   return (
-    <section id="how-it-works" className="pb-12 xs:pb-16 md:pb-20 relative" ref={sectionRef}>
+    <section id="how-it-works" className="pb-12 xs:pb-16 md:pt-0 relative" ref={sectionRef}>
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#1DA1F2]/20 rounded-full blur-3xl opacity-50 animate-pulse" />
@@ -133,7 +133,7 @@ export default function HowItWorks() {
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-8 xs:mb-12 md:mb-16">
           <h2 className="text-3xl xs:text-4xl md:text-5xl font-bold mb-3 xs:mb-4">
-            <span className="text-[#1DA1F2] drop-shadow-lg">
+            <span className="text-blue-500 drop-shadow-lg">
               How it works
             </span>
           </h2>
