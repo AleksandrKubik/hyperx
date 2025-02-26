@@ -1,17 +1,9 @@
-import { Context } from '@cloudflare/workers-types'
-
-export interface Env {
-    // Определите переменные окружения здесь, если они нужны
-}
-
-interface RequestContext {
+export const onRequest = async (context: {
     request: Request;
     next: () => Promise<Response>;
-    env: Env;
-}
-
-export const onRequest = async ({ request, next }: RequestContext) => {
-    const response = await next()
+    env: Record<string, unknown>;
+}) => {
+    const response = await context.next()
 
     // Добавляем заголовки безопасности
     response.headers.set('X-Frame-Options', 'DENY')
@@ -22,7 +14,7 @@ export const onRequest = async ({ request, next }: RequestContext) => {
         "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-ancestors 'none'")
 
     // Блокируем индексацию тестового домена
-    if (request.url.includes('.pages.dev')) {
+    if (context.request.url.includes('.pages.dev')) {
         response.headers.set('X-Robots-Tag', 'noindex')
     }
 
