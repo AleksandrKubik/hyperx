@@ -1,4 +1,4 @@
-name = "your-project-name"
+name = "hyperx"
 type = "javascript"
 
 workers_dev = true
@@ -15,5 +15,8 @@ NODE_VERSION = "18.18.0"
 NODE_VERSION = "20.11.0"
 
 [site]
-bucket = ".next/static"
+bucket = "out"
 entry-point = "."
+
+[build.upload]
+format = "service-worker"
