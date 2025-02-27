@@ -59,15 +59,6 @@ const posts = [
   "/post_components/Post_8.svg"
 ];
 
-// Перемещаем стили в отдельный CSS файл
-// src/styles/animations.css
-const fadeInAnimation = {
-  opacity: 0,
-  animation: 'fadeIn 0.5s ease forwards',
-  WebkitTransform: 'translateZ(0)',
-  transform: 'translateZ(0)'
-};
-
 export default function HowItWorks() {
   const [visibleComments, setVisibleComments] = useState<Array<{ id: number; src: string }>>([]);
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
