@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "../app/globals.css";
 import { LayoutContent } from "../components/LayoutContent";
 import type { Metadata } from 'next'
+import '@/styles/animations.css'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],

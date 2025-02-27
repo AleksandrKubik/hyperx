@@ -57,6 +57,15 @@ const posts = [
   "/post_components/Post_8.svg"
 ];
 
+// Перемещаем стили в отдельный CSS файл
+// src/styles/animations.css
+const fadeInAnimation = {
+  opacity: 0,
+  animation: 'fadeIn 0.5s ease forwards',
+  WebkitTransform: 'translateZ(0)',
+  transform: 'translateZ(0)'
+};
+
 export default function HowItWorks() {
   const [visibleComments, setVisibleComments] = useState<string[]>([]);
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
@@ -71,7 +80,7 @@ export default function HowItWorks() {
           observer.disconnect();
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.7 }
     );
 
     if (sectionRef.current) {
@@ -200,12 +209,10 @@ export default function HowItWorks() {
                   key={idx}
                   src={comment}
                   alt={`Comment ${idx + 1}`}
-                  className="w-full mb-4"
+                  className="w-full mb-4 animate-fadeIn"
                   style={{
-                    opacity: 0,
-                    animation: `fadeIn 0.5s ease ${idx}s forwards`,
-                    WebkitTransform: 'translateZ(0)',
-                    transform: 'translateZ(0)'
+                    ...fadeInAnimation,
+                    animationDelay: `${idx}s`
                   }}
                 />
               ))}
@@ -215,23 +222,4 @@ export default function HowItWorks() {
       </div>
     </section>
   );
-}
-
-// Добавляем стили анимации
-const styles = `
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@-webkit-keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-`;
-
-if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement('style');
-  styleSheet.textContent = styles;
-  document.head.appendChild(styleSheet);
 } 
