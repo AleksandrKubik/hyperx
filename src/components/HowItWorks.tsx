@@ -1,6 +1,8 @@
 "use client";
 
-import { FileText, CreditCard, Send, CheckCircle2 } from 'lucide-react'; import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
+import { FileText, CreditCard, Send, CheckCircle2 } from 'lucide-react';
 
 const steps = [
   {
@@ -220,25 +222,35 @@ export default function HowItWorks() {
 
           {/* Post and Comments Block */}
           <div className="flex-1 h-full md:h-auto flex flex-col md:ml-10 ml-0 md:mt-0 mt-10 items-center relative">
-            <img src="/post_components/Iphone_pro.png" alt="Iphone Mockup" className="w-full" />
+            <Image
+              src="/post_components/Iphone_pro.png"
+              alt="Iphone Mockup"
+              className="w-full"
+              width={500}
+              height={1000}
+              priority
+            />
             <div className="absolute top-0 left-0 h-full max-w-50 md:m-10 m-8 md:pt-10 pt-5 flex flex-col items-center">
-              <img
+              <Image
                 src={posts[currentPostIndex]}
                 alt="Post"
                 className="top-0 left-0 w-full transition-opacity duration-100"
+                width={300}
+                height={400}
                 style={{
-                  opacity: 1,
                   marginBottom: '2vh',
                   WebkitTransform: 'translateZ(0)',
                   transform: 'translateZ(0)'
                 }}
               />
               {visibleComments.map((comment) => (
-                <img
+                <Image
                   key={comment.id}
                   src={comment.src}
                   alt={`Comment ${comment.id}`}
                   className="w-full mb-4"
+                  width={300}
+                  height={100}
                   style={{
                     animation: `fadeIn 0.5s ease forwards`,
                     opacity: 0,
