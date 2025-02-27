@@ -12,6 +12,7 @@ const nextConfig = {
     },
     experimental: {
         turbo: {},
+        scrollRestoration: true
     },
     webpack: (config, { isServer }) => {
         if (!isServer) {

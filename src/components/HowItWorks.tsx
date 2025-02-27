@@ -67,52 +67,81 @@ const fadeInAnimation = {
 };
 
 export default function HowItWorks() {
-  const [visibleComments, setVisibleComments] = useState<string[]>([]);
+  const [visibleComments, setVisibleComments] = useState<Array<{ id: number; src: string }>>([]);
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.7 }
-    );
+    // Более надежная проверка видимости
+    const checkVisibility = () => {
+      if (!sectionRef.current || hasAnimated.current) return;
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+      const rect = sectionRef.current.getBoundingClientRect();
+      const isInViewport = rect.top <= window.innerHeight && rect.bottom >= 0;
+
+      if (isInViewport) {
+        setIsVisible(true);
+        hasAnimated.current = true;
+        window.removeEventListener('scroll', checkVisibility);
+      }
+    };
+
+    // Проверяем видимость при монтировании
+    checkVisibility();
+
+    // Добавляем слушатель прокрутки
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+
+    // Дополнительно проверяем через небольшую задержку для мобильных устройств
+    const timeoutId = setTimeout(checkVisibility, 50);
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      window.removeEventListener('scroll', checkVisibility);
+      clearTimeout(timeoutId);
     };
   }, []);
 
   useEffect(() => {
-    if (isVisible) {
+    if (!isVisible) return;
+
+    // Добавляем небольшую задержку перед стартом анимации
+    const startTimeout = setTimeout(() => {
       changePost();
       addComments();
-    }
+    }, 100);
+
+    return () => clearTimeout(startTimeout);
   }, [isVisible]);
 
   const addComments = () => {
-    let commentIndex = -1;
+    let commentIndex = 0;
+
+    // Добавляем первый комментарий сразу
+    setVisibleComments([{
+      id: Date.now(),
+      src: comments[0]
+    }]);
+
     const commentInterval = setInterval(() => {
-      if (commentIndex < comments.length - 1) {
-        setTimeout(() => {
-          setVisibleComments((prev) => [...prev, comments[commentIndex]]);
-        }, 50);
-        commentIndex++;
-      } else {
+      commentIndex++;
+
+      if (commentIndex >= comments.length) {
         clearInterval(commentInterval);
+        return;
       }
-    }, 100);
+
+      setVisibleComments(prev => {
+        if (prev.some(comment => comment.src === comments[commentIndex])) {
+          return prev;
+        }
+        return [...prev, {
+          id: Date.now() + commentIndex,
+          src: comments[commentIndex]
+        }];
+      });
+    }, 700);
 
     return () => clearInterval(commentInterval);
   };
@@ -120,13 +149,13 @@ export default function HowItWorks() {
   const changePost = () => {
     let postIndex = 0;
     const postInterval = setInterval(() => {
-      if (postIndex < posts.length - 1) {
-        setCurrentPostIndex((prevIndex) => (prevIndex + 1) % posts.length);
-        postIndex++;
-      } else {
+      if (postIndex >= posts.length - 1) {
         clearInterval(postInterval);
+        return;
       }
-    }, 1200);
+      setCurrentPostIndex(prev => (prev + 1) % posts.length);
+      postIndex++;
+    }, 700);
 
     return () => clearInterval(postInterval);
   };
@@ -204,15 +233,17 @@ export default function HowItWorks() {
                   transform: 'translateZ(0)'
                 }}
               />
-              {visibleComments.map((comment, idx) => (
+              {visibleComments.map((comment) => (
                 <img
-                  key={idx}
-                  src={comment}
-                  alt={`Comment ${idx + 1}`}
-                  className="w-full mb-4 animate-fadeIn"
+                  key={comment.id}
+                  src={comment.src}
+                  alt={`Comment ${comment.id}`}
+                  className="w-full mb-4"
                   style={{
-                    ...fadeInAnimation,
-                    animationDelay: `${idx}s`
+                    animation: `fadeIn 0.5s ease forwards`,
+                    opacity: 0,
+                    WebkitTransform: 'translateZ(0)',
+                    transform: 'translateZ(0)'
                   }}
                 />
               ))}
