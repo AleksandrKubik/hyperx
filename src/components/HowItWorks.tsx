@@ -1,5 +1,6 @@
-import { FileText, CreditCard, Send, CheckCircle2 } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+"use client";
+
+import { FileText, CreditCard, Send, CheckCircle2 } from 'lucide-react'; import { useEffect, useState, useRef } from 'react';
 
 const steps = [
   {
@@ -70,38 +71,56 @@ export default function HowItWorks() {
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 }
     );
 
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (isVisible) {
+      changePost();
+      addComments();
+    }
+  }, [isVisible]);
 
-    // Анимация постов
-    const postInterval = setInterval(() => {
-      setCurrentPostIndex(prev => (prev + 1) % posts.length);
-    }, 1200);
-
-    // Анимация комментариев
-    let commentIndex = 0;
+  const addComments = () => {
+    let commentIndex = -1;
     const commentInterval = setInterval(() => {
-      if (commentIndex < comments.length) {
-        setVisibleComments(prev => [...prev, comments[commentIndex]]);
+      if (commentIndex < comments.length - 1) {
+        setTimeout(() => {
+          setVisibleComments((prev) => [...prev, comments[commentIndex]]);
+        }, 50);
         commentIndex++;
+      } else {
+        clearInterval(commentInterval);
       }
     }, 100);
 
-    return () => {
-      clearInterval(postInterval);
-      clearInterval(commentInterval);
-    };
-  }, [isVisible]);
+    return () => clearInterval(commentInterval);
+  };
+
+  const changePost = () => {
+    let postIndex = 0;
+    const postInterval = setInterval(() => {
+      if (postIndex < posts.length - 1) {
+        setCurrentPostIndex((prevIndex) => (prevIndex + 1) % posts.length);
+        postIndex++;
+      } else {
+        clearInterval(postInterval);
+      }
+    }, 1200);
+
+    return () => clearInterval(postInterval);
+  };
 
   return (
     <section id="how-it-works" className="pb-12 xs:pb-16 md:pt-0 relative" ref={sectionRef}>
@@ -162,25 +181,31 @@ export default function HowItWorks() {
           </div>
 
           {/* Post and Comments Block */}
-          <div className="flex-1 h-full md:h-auto flex flex-col md:ml-10 ml-0 md:mt-0 mt-10  items-center relative">
+          <div className="flex-1 h-full md:h-auto flex flex-col md:ml-10 ml-0 md:mt-0 mt-10 items-center relative">
             <img src="/post_components/Iphone_pro.png" alt="Iphone Mockup" className="w-full" />
             <div className="absolute top-0 left-0 h-full max-w-50 md:m-10 m-8 md:pt-10 pt-5 flex flex-col items-center">
               <img
                 src={posts[currentPostIndex]}
                 alt="Post"
-                className="w-full transition-all duration-300"
-                style={{ marginBottom: '2vh' }}
+                className="top-0 left-0 w-full transition-opacity duration-100"
+                style={{
+                  opacity: 1,
+                  marginBottom: '2vh',
+                  WebkitTransform: 'translateZ(0)',
+                  transform: 'translateZ(0)'
+                }}
               />
               {visibleComments.map((comment, idx) => (
                 <img
                   key={idx}
                   src={comment}
                   alt={`Comment ${idx + 1}`}
-                  className="w-full mb-4 animate-fadeIn"
+                  className="w-full mb-4"
                   style={{
-                    animationDelay: `${idx * 0.1}s`,
                     opacity: 0,
-                    animation: `fadeIn 0.5s ease ${idx * 0.1}s forwards`
+                    animation: `fadeIn 0.5s ease ${idx}s forwards`,
+                    WebkitTransform: 'translateZ(0)',
+                    transform: 'translateZ(0)'
                   }}
                 />
               ))}
@@ -191,3 +216,22 @@ export default function HowItWorks() {
     </section>
   );
 }
+
+// Добавляем стили анимации
+const styles = `
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@-webkit-keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+`;
+
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+} 
