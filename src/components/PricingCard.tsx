@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Link2, ArrowRight, Mail, MessageSquare } from 'lucide-react';
+import { Link2, ArrowRight, Mail, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -78,7 +78,6 @@ interface PostData {
 
 export default function PricingCardV2() {
   const router = useRouter();
-  const [boostType, setBoostType] = useState<'weekly' | 'onetime'>('weekly');
   const [tweetUrl, setTweetUrl] = useState('');
   const [postData] = useState<PostData | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<number>(0);
@@ -86,35 +85,63 @@ export default function PricingCardV2() {
   const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>('');
   const [contactValue, setContactValue] = useState('');
   const [error, setError] = useState('');
+  const [boostType, setBoostType] = useState<'weekly' | 'onetime'>('weekly');
 
   const currentPricingTiers = boostType === 'weekly' ? weeklyPricingTiers : oneTimePricingTiers;
 
+  const validateXUsername = (username: string): boolean => {
+    const cleanUsername = username.replace(/^@/, '');
+    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{3,14}$/;
+
+    return usernameRegex.test(cleanUsername);
+  };
+
+  const validateTweetUrl = (url: string): boolean => {
+    const tweetUrlRegex = /^https?:\/\/(twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/\d+/i;
+
+    return tweetUrlRegex.test(url);
+  };
+
   const handleSubmitStep1 = () => {
-    if (!tweetUrl) {
-      setError('Please enter your tweet URL');
+    setError('');
+
+    if (!tweetUrl.trim()) {
+      setError(boostType === 'weekly'
+        ? 'Please enter your X account name'
+        : 'Please enter your tweet URL'
+      );
       return;
     }
+
     if (selectedPackage === null) {
       setError('Please select a package');
       return;
     }
 
-    // Проверка URL на соответствие сервисам
-    const isXService = /x\.com/.test(tweetUrl);
-    const isTelegramService = /t\.me|telegram\.org/.test(tweetUrl);
-    const isYouTubeService = /youtube\.com|youtu\.be/.test(tweetUrl);
+    if (boostType === 'weekly') {
+      if (!validateXUsername(tweetUrl)) {
+        setError('Please enter a valid X account name (4-15 characters, letters, numbers and underscores, must start with a letter)');
+        return;
+      }
+      const cleanUsername = tweetUrl.replace(/^@/, '');
+      router.push(`/services/x-boost/contact?username=${encodeURIComponent(cleanUsername)}&package=${selectedPackage}&type=weekly`);
 
-    if (!isXService && !isTelegramService && !isYouTubeService) {
-      setError('Please enter a valid URL');
-      return;
+    } else {
+      if (!validateTweetUrl(tweetUrl)) {
+        setError('Please enter a valid tweet URL (e.g., https://x.com/username/status/123...)');
+        return;
+      }
+
+      router.push(`/services/x-boost/contact?url=${encodeURIComponent(tweetUrl)}&package=${selectedPackage}&type=onetime`);
     }
-
-    setError('');
-    // Перенаправляем на страницу контактной информации с параметрами
-    router.push(`/services/x-boost/contact?url=${encodeURIComponent(tweetUrl)}&package=${selectedPackage}`);
   };
 
-  const handleSubmitStep2 = () => {
+  const handleInputChange = (value: string) => {
+    setError('');
+    setTweetUrl(value);
+  };
+
+  const handleSubmitStep2 = async () => {
     if (!contactMethod) {
       setError('Please select contact method');
       return;
@@ -126,13 +153,40 @@ export default function PricingCardV2() {
     if (selectedPackage === null) return;
 
     setError('');
-    // Здесь будет отправка формы
-    console.log({
-      tweetUrl,
-      package: currentPricingTiers[selectedPackage],
-      contactMethod,
-      contactValue
-    });
+
+    try {
+      const response = await fetch('https://anykind.app.n8n.cloud/webhook/191cc54c-fccc-458f-9a57-1c45f1183a15', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: 1,
+          [contactMethod]: contactValue,
+          pack: selectedPackage + 1,
+          url: boostType === 'weekly' ? tweetUrl : '',
+          tweet_url: boostType === 'onetime' ? tweetUrl : '',
+          boost_type: boostType,
+          utm_source: document.referrer || 'direct',
+          selected_package: {
+            ...currentPricingTiers[selectedPackage],
+            type: boostType
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+
+      setStep(3);
+      setContactValue('');
+      setError('');
+
+    } catch (err) {
+      setError('Failed to submit form. Please try again.');
+      console.error('Form submission error:', err);
+    }
   };
 
   const selectedTier = selectedPackage !== null ? currentPricingTiers[selectedPackage] : null;
@@ -204,13 +258,17 @@ export default function PricingCardV2() {
                       <Link2 className="w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2]" />
                     </div>
                     <input
-                      type={boostType === 'weekly' ? 'text' : 'url'}
+                      type="text"
                       placeholder={getInputPlaceholder()}
-                      className="w-full pl-9 xs:pl-10 pr-4 py-2.5 xs:py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:border-[#1DA1F2]/30 text-sm xs:text-base"
+                      className={`w-full pl-9 xs:pl-10 pr-4 py-2.5 xs:py-3 bg-white/5 border rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:border-[#1DA1F2]/30 text-sm xs:text-base transition-colors ${error ? 'border-red-500' : 'border-white/10'
+                        }`}
                       value={tweetUrl}
-                      onChange={(e) => setTweetUrl(e.target.value)}
+                      onChange={(e) => handleInputChange(e.target.value)}
                     />
                   </div>
+                  {error && (
+                    <div className="mt-2 text-red-500 text-sm">{error}</div>
+                  )}
                 </div>
 
                 {/* Preview Card */}
@@ -252,8 +310,8 @@ export default function PricingCardV2() {
                       className="block cursor-pointer group"
                     >
                       <div className={`relative flex items-center justify-between p-3 xs:p-4 rounded-xl transition-all ${selectedPackage === index
-                          ? 'bg-white/10'
-                          : 'bg-white/5 hover:bg-white/8'
+                        ? 'bg-white/10'
+                        : 'bg-white/5 hover:bg-white/8'
                         }`}>
                         <div className="flex items-center gap-2 xs:gap-3">
                           <input
@@ -306,7 +364,7 @@ export default function PricingCardV2() {
                   </button>
                 </div>
               </>
-            ) : (
+            ) : step === 2 ? (
               <>
                 {/* Step 2: Contact Details */}
                 <div className="space-y-4 xs:space-y-6">
@@ -401,17 +459,28 @@ export default function PricingCardV2() {
                   </div>
                 </div>
               </>
-            )}
-
-            {step === 1 && (
-              <div className="text-center mt-4 text-white/50 text-xs xs:text-sm">
-                No credit card required • Cancel anytime
+            ) : (
+              <div className="text-center">
+                <div className="mb-4">
+                  <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Thank you for your request!
+                </h3>
+                <p className="text-white/70 mb-6">
+                  We will process your order and contact you shortly.
+                </p>
+                <button
+                  onClick={() => {
+                    setStep(1);
+                    setTweetUrl('');
+                    setSelectedPackage(0);
+                  }}
+                  className="px-6 py-2 bg-[#1DA1F2] rounded-xl text-white font-medium hover:bg-[#1A91DA] transition-all"
+                >
+                  Submit another request
+                </button>
               </div>
-            )}
-
-            {/* Error Message */}
-            {error && step === 1 && (
-              <div className="mt-4 text-red-500 text-xs xs:text-sm text-center">{error}</div>
             )}
           </div>
         </div>

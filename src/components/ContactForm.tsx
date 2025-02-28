@@ -136,7 +136,7 @@ const ContactForm = () => {
                 </button>
 
                 {/* Trust Indicators */}
-                <div className="grid grid-cols-2 gap-3 xs:gap-4">
+                <div className="grid grid-cols-2 gap-3 mt-3 xs:gap-4">
                     <div className="flex items-center justify-center gap-2 text-white/70">
                         <Shield className="w-4 h-4 text-[#1DA1F2]" />
                         <span className="text-xs xs:text-sm">Secure & Private</span>
