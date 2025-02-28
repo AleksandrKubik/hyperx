@@ -123,7 +123,9 @@ export default function PricingCardV2() {
         setError('Please enter a valid X account name (4-15 characters, letters, numbers and underscores, must start with a letter)');
         return;
       }
+
       const cleanUsername = tweetUrl.replace(/^@/, '');
+
       router.push(`/services/x-boost/contact?username=${encodeURIComponent(cleanUsername)}&package=${selectedPackage}&type=weekly`);
 
     } else {

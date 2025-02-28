@@ -9,14 +9,52 @@ interface PricingTier {
     replies: number;
     price: number;
     topTierReplies?: number;
+    bonus?: number;
 }
 
-const pricingTiers: PricingTier[] = [
-    { replies: 5, price: 0 },
-    { replies: 20, price: 20 },
-    { replies: 50, price: 50 },
-    { replies: 100, price: 100, topTierReplies: 2 },
-    { replies: 150, price: 250, topTierReplies: 5 },
+const weeklyPricingTiers: PricingTier[] = [
+    {
+        replies: 20,
+        price: 20,
+    },
+    {
+        replies: 50,
+        price: 20,
+        bonus: 10
+    },
+    {
+        replies: 100,
+        price: 50,
+        topTierReplies: 2,
+        bonus: 20
+    },
+    {
+        replies: 150,
+        price: 100,
+        topTierReplies: 5,
+        bonus: 30
+    },
+];
+
+const oneTimePricingTiers: PricingTier[] = [
+    {
+        replies: 20,
+        price: 20,
+    },
+    {
+        replies: 50,
+        price: 50,
+    },
+    {
+        replies: 100,
+        price: 100,
+        topTierReplies: 2,
+    },
+    {
+        replies: 150,
+        price: 250,
+        topTierReplies: 5,
+    },
 ];
 
 function ContactForm() {
@@ -29,15 +67,25 @@ function ContactForm() {
     const [submitSuccess, setSubmitSuccess] = useState(false);
 
     const tweetUrl = searchParams?.get('url');
+    const username = searchParams?.get('username');
     const selectedPackageIndex = searchParams?.get('package');
+    const boostType = searchParams?.get('type');
 
     useEffect(() => {
-        if (!tweetUrl || selectedPackageIndex === null || isNaN(Number(selectedPackageIndex))) {
+        // Проверяем наличие необходимых параметров
+        if (
+            (!tweetUrl && !username) ||
+            selectedPackageIndex === null ||
+            isNaN(Number(selectedPackageIndex)) ||
+            !boostType
+        ) {
             router.push('/services/x-boost');
         }
-    }, [tweetUrl, selectedPackageIndex, router]);
+    }, [tweetUrl, username, selectedPackageIndex, boostType, router]);
 
-    const selectedTier = selectedPackageIndex !== null ? pricingTiers[Number(selectedPackageIndex)] : null;
+    const selectedTier = selectedPackageIndex !== null
+        ? (boostType === 'weekly' ? weeklyPricingTiers : oneTimePricingTiers)[Number(selectedPackageIndex)]
+        : null;
 
     const handleSubmit = async () => {
         if (!contactMethod) {
@@ -62,9 +110,10 @@ function ContactForm() {
                     data: 1,
                     email: contactMethod === 'email' ? contactValue : '',
                     telegram: contactMethod === 'telegram' ? contactValue : '',
-                    pack: Number(selectedPackageIndex),
-                    url: tweetUrl,
-                    utm_source: ''
+                    pack: Number(selectedPackageIndex) + 1,
+                    url: boostType === 'weekly' ? username : tweetUrl,
+                    boost_type: boostType,
+                    utm_source: document.referrer || 'direct'
                 })
             });
 
@@ -111,17 +160,17 @@ function ContactForm() {
             <div className="container mx-auto px-4">
                 <div className="max-w-3xl mx-auto">
                     <div className="glass-card bg-black/40 backdrop-blur-xl p-4 xs:p-6 md:p-8 rounded-2xl border border-white/10">
-                        {/* Contact Details */}
+                        {/* Details Display */}
                         <div className="mb-6">
                             <div className="mb-2">
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
                                     <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
-                                        Paste a link to your tweet on X
+                                        {boostType === 'weekly' ? 'Your X Account' : 'Your Tweet URL'}
                                     </div>
                                 </div>
                                 <div className="bg-white/5 rounded-xl px-4 py-3 text-white text-sm xs:text-base">
-                                    {tweetUrl}
+                                    {boostType === 'weekly' ? username : tweetUrl}
                                 </div>
                             </div>
                             {selectedTier && (
@@ -129,21 +178,23 @@ function ContactForm() {
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
                                         <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
-                                            Choose Pack
+                                            Selected Package
                                         </div>
                                     </div>
                                     <div className="bg-white/5 rounded-xl px-4 py-3 flex justify-between items-center">
                                         <span className="text-white text-sm xs:text-base">
-                                            {selectedTier.replies} Replies + Likes
-                                            {selectedTier.price > 0 ? ' + RT' : ''}
+                                            {selectedTier.replies} Replies + Likes + RT
+                                            {boostType === 'weekly' && Number(selectedPackageIndex) <= 1 && (
+                                                <span className="font-bold ml-1">every week</span>
+                                            )}
                                             {selectedTier.topTierReplies &&
                                                 ` + ${selectedTier.topTierReplies} Top Tier Replies`}
+                                            {selectedTier.bonus && (
+                                                <span className="text-[#4CAF50] ml-2">+{selectedTier.bonus}% Bonus</span>
+                                            )}
                                         </span>
-                                        <span className={`${selectedTier.price === 0
-                                            ? 'bg-green-500 px-3 py-1 rounded-lg font-medium'
-                                            : 'text-white/50'
-                                            } text-sm xs:text-base`}>
-                                            {selectedTier.price === 0 ? 'FREE' : `$${selectedTier.price}`}
+                                        <span className="text-white/50 text-sm xs:text-base">
+                                            ${selectedTier.price}{boostType === 'weekly' ? '/mo' : ''}
                                         </span>
                                     </div>
                                 </div>
