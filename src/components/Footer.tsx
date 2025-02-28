@@ -73,14 +73,6 @@ export default function Footer() {
                         <Link href="/privacy" className="text-emerald-500 hover:text-emerald-400">
                             Privacy Policy
                         </Link>
-                        <span>·</span>
-                        <Link href="/support" className="text-emerald-500 hover:text-emerald-400">
-                            Support
-                        </Link>
-                        <span>·</span>
-                        <Link href="/about" className="text-emerald-500 hover:text-emerald-400">
-                            Refund and Shipping
-                        </Link>
                     </div>
                 </div>
 
@@ -143,14 +135,6 @@ export default function Footer() {
                         <span>·</span>
                         <Link href="/privacy" className="text-emerald-500 hover:text-emerald-400">
                             Privacy Policy
-                        </Link>
-                        <span>·</span>
-                        <Link href="/support" className="text-emerald-500 hover:text-emerald-400">
-                            Support
-                        </Link>
-                        <span>·</span>
-                        <Link href="/about" className="text-emerald-500 hover:text-emerald-400">
-                            Refund and Shipping
                         </Link>
                     </div>
 

@@ -9,13 +9,46 @@ interface PricingTier {
   replies: number;
   price: number;
   topTierReplies?: number;
+  bonus?: number;
 }
 
-const pricingTiers: PricingTier[] = [
+// Commented out free tier for future use
+// const freeTier: PricingTier = {
+//   replies: 5,
+//   price: 0,
+// };
+
+const weeklyPricingTiers: PricingTier[] = [
+  // {
+  //   ...freeTier,
+  // },
   {
-    replies: 5,
-    price: 0,
+    replies: 20,
+    price: 20,
   },
+  {
+    replies: 50,
+    price: 20,
+    bonus: 10
+  },
+  {
+    replies: 100,
+    price: 50,
+    topTierReplies: 2,
+    bonus: 20
+  },
+  {
+    replies: 150,
+    price: 100,
+    topTierReplies: 5,
+    bonus: 30
+  },
+];
+
+const oneTimePricingTiers: PricingTier[] = [
+  // {
+  //   ...freeTier,
+  // },
   {
     replies: 20,
     price: 20,
@@ -45,6 +78,7 @@ interface PostData {
 
 export default function PricingCardV2() {
   const router = useRouter();
+  const [boostType, setBoostType] = useState<'weekly' | 'onetime'>('weekly');
   const [tweetUrl, setTweetUrl] = useState('');
   const [postData] = useState<PostData | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<number>(0);
@@ -53,6 +87,7 @@ export default function PricingCardV2() {
   const [contactValue, setContactValue] = useState('');
   const [error, setError] = useState('');
 
+  const currentPricingTiers = boostType === 'weekly' ? weeklyPricingTiers : oneTimePricingTiers;
 
   const handleSubmitStep1 = () => {
     if (!tweetUrl) {
@@ -94,13 +129,25 @@ export default function PricingCardV2() {
     // Здесь будет отправка формы
     console.log({
       tweetUrl,
-      package: pricingTiers[selectedPackage],
+      package: currentPricingTiers[selectedPackage],
       contactMethod,
       contactValue
     });
   };
 
-  const selectedTier = selectedPackage !== null ? pricingTiers[selectedPackage] : null;
+  const selectedTier = selectedPackage !== null ? currentPricingTiers[selectedPackage] : null;
+
+  const getInputLabel = () => {
+    return boostType === 'weekly'
+      ? 'Paste name of your X account'
+      : 'Paste a link to your tweet';
+  };
+
+  const getInputPlaceholder = () => {
+    return boostType === 'weekly'
+      ? 'Enter your X account name (e.g. @username)'
+      : 'Paste a link to your tweet on X';
+  };
 
   return (
     <section id="pricing" className="py-12 xs:py-16 md:py-20">
@@ -122,12 +169,34 @@ export default function PricingCardV2() {
           <div className="glass-card bg-black/40 backdrop-blur-xl p-4 xs:p-6 md:p-8 rounded-2xl border border-white/10">
             {step === 1 ? (
               <>
+                {/* Boost Type Tabs */}
+                <div className="flex mb-6 xs:mb-8 border border-white/10 rounded-xl p-1">
+                  <button
+                    onClick={() => setBoostType('weekly')}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-sm xs:text-base font-medium transition-all ${boostType === 'weekly'
+                      ? 'bg-[#1DA1F2] text-white'
+                      : 'text-white/70 hover:text-white hover:bg-white/5'
+                      }`}
+                  >
+                    Weekly Boost
+                  </button>
+                  <button
+                    onClick={() => setBoostType('onetime')}
+                    className={`flex-1 py-2.5 px-4 rounded-lg text-sm xs:text-base font-medium transition-all ${boostType === 'onetime'
+                      ? 'bg-[#1DA1F2] text-white'
+                      : 'text-white/70 hover:text-white hover:bg-white/5'
+                      }`}
+                  >
+                    One-time boost
+                  </button>
+                </div>
+
                 {/* URL Input */}
                 <div className="mb-6 xs:mb-8">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
                     <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
-                      Paste a link to your tweet
+                      {getInputLabel()}
                     </div>
                   </div>
                   <div className="relative">
@@ -135,8 +204,8 @@ export default function PricingCardV2() {
                       <Link2 className="w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2]" />
                     </div>
                     <input
-                      type="url"
-                      placeholder="Paste a link to your tweet on X"
+                      type={boostType === 'weekly' ? 'text' : 'url'}
+                      placeholder={getInputPlaceholder()}
                       className="w-full pl-9 xs:pl-10 pr-4 py-2.5 xs:py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:border-[#1DA1F2]/30 text-sm xs:text-base"
                       value={tweetUrl}
                       onChange={(e) => setTweetUrl(e.target.value)}
@@ -177,14 +246,14 @@ export default function PricingCardV2() {
                     </div>
                   </div>
 
-                  {pricingTiers.map((tier, index) => (
+                  {currentPricingTiers.map((tier, index) => (
                     <label
                       key={index}
                       className="block cursor-pointer group"
                     >
                       <div className={`relative flex items-center justify-between p-3 xs:p-4 rounded-xl transition-all ${selectedPackage === index
-                        ? 'bg-white/10'
-                        : 'bg-white/5 hover:bg-white/8'
+                          ? 'bg-white/10'
+                          : 'bg-white/5 hover:bg-white/8'
                         }`}>
                         <div className="flex items-center gap-2 xs:gap-3">
                           <input
@@ -197,9 +266,12 @@ export default function PricingCardV2() {
                           <span className="flex flex-wrap items-center gap-1">
                             <span className="text-[#4CAF50] font-medium text-sm xs:text-base">{tier.replies}</span>
                             <span className="text-white/90 text-sm xs:text-base">
-                              {tier.price > 0 ? 'Replies + Likes + RT' : 'Replies + Likes'}
+                              Replies + Likes + RT
+                              {boostType === 'weekly' && index <= 1 && (
+                                <span className="font-bold ml-1">every week</span>
+                              )}
                             </span>
-                            {tier.topTierReplies && tier.price > 0 && (
+                            {tier.topTierReplies && (
                               <>
                                 <span className="text-white/50 mx-1">+</span>
                                 <span className="text-[#4CAF50] font-medium text-sm xs:text-base">{tier.topTierReplies}</span>
@@ -208,9 +280,15 @@ export default function PricingCardV2() {
                             )}
                           </span>
                         </div>
-                        <div className={`text-white font-medium text-sm xs:text-base ml-2 ${tier.price === 0 ? 'bg-green-500 p-2 rounded-lg' : 'text-white/50'
-                          }`}>
-                          {tier.price === 0 ? 'FREE' : `$${tier.price}`}
+                        <div className="flex items-center gap-2">
+                          {tier.bonus && (
+                            <span className="text-[#4CAF50] text-sm xs:text-base font-medium">
+                              +{tier.bonus}% Bonus
+                            </span>
+                          )}
+                          <div className="text-white font-medium text-sm xs:text-base ml-2">
+                            ${tier.price}{boostType === 'weekly' ? '/mo' : ''}
+                          </div>
                         </div>
                       </div>
                     </label>
