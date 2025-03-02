@@ -1,5 +1,6 @@
 import { FileText, CreditCard, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
 
+// Define the steps of the process
 const steps = [
   {
     icon: FileText,

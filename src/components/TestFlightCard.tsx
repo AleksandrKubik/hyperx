@@ -2,6 +2,7 @@
 
 import { ArrowRight } from 'lucide-react';
 
+// TestFlightCard component that displays a promotional card for a test flight
 export default function TestFlightCard() {
     return (
         <div id="test-flight" className="mt-8 xs:mt-12 md:mt-16 max-w-3xl mx-auto">

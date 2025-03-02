@@ -4,92 +4,52 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, MessageSquare, ArrowRight } from 'lucide-react';
 
-// Define the PricingTier interface and pricing tiers arrays
+// Определение интерфейса и массивов пакетов
 interface PricingTier {
-    replies: number; // Number of replies included
-    price: number; // Price of the package
-    topTierReplies?: number; // Optional top tier replies
-    bonus?: number; // Optional bonus percentage
+    replies: number;
+    price: number;
+    topTierReplies?: number;
+    bonus?: number;
 }
 
 const weeklyPricingTiers: PricingTier[] = [
-    {
-        replies: 20,
-        price: 20,
-    },
-    {
-        replies: 50,
-        price: 20,
-        bonus: 10
-    },
-    {
-        replies: 100,
-        price: 50,
-        topTierReplies: 2,
-        bonus: 20
-    },
-    {
-        replies: 150,
-        price: 100,
-        topTierReplies: 5,
-        bonus: 30
-    },
+    { replies: 20, price: 20 },
+    { replies: 50, price: 20, bonus: 10 },
+    { replies: 100, price: 50, topTierReplies: 2, bonus: 20 },
+    { replies: 150, price: 100, topTierReplies: 5, bonus: 30 },
 ];
 
 const oneTimePricingTiers: PricingTier[] = [
-    {
-        replies: 20,
-        price: 20,
-    },
-    {
-        replies: 50,
-        price: 50,
-    },
-    {
-        replies: 100,
-        price: 100,
-        topTierReplies: 2,
-    },
-    {
-        replies: 150,
-        price: 250,
-        topTierReplies: 5,
-    },
+    { replies: 20, price: 20 },
+    { replies: 50, price: 50 },
+    { replies: 100, price: 100, topTierReplies: 2 },
+    { replies: 150, price: 250, topTierReplies: 5 },
 ];
 
-// Contact form component
 function ContactForm() {
-    const router = useRouter(); // Router for navigation
-    const searchParams = useSearchParams(); // Get search parameters from the URL
-    const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>(''); // State for contact method
-    const [contactValue, setContactValue] = useState(''); // State for contact value (email or Telegram handle)
-    const [error, setError] = useState(''); // State for error messages
-    const [isSubmitting, setIsSubmitting] = useState(false); // State for submission status
-    const [submitSuccess, setSubmitSuccess] = useState(false); // State for submission success
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [contactMethod, setContactMethod] = useState<'email' | 'telegram' | ''>('');
+    const [contactValue, setContactValue] = useState('');
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
 
-    const tweetUrl = searchParams?.get('url'); // Get tweet URL from search params
-    const username = searchParams?.get('username'); // Get username from search params
-    const selectedPackageIndex = searchParams?.get('package'); // Get selected package index from search params
-    const boostType = searchParams?.get('type'); // Get boost type from search params
+    const username = searchParams?.get('username');
+    const selectedPackageIndex = searchParams?.get('package');
+    const boostType = searchParams?.get('type');
 
     useEffect(() => {
-        // Check for necessary parameters
-        if (
-            (!tweetUrl && !username) ||
-            selectedPackageIndex === null ||
-            isNaN(Number(selectedPackageIndex)) ||
-            !boostType
-        ) {
-            router.push('/services/x-boost'); // Redirect if parameters are missing
+        if (selectedPackageIndex === null || isNaN(Number(selectedPackageIndex)) || !boostType) {
+            router.push('/services/telegram-boost');
         }
-    }, [tweetUrl, username, selectedPackageIndex, boostType, router]);
+    }, [selectedPackageIndex, boostType, router]);
 
     const selectedTier = selectedPackageIndex !== null
         ? (boostType === 'weekly' ? weeklyPricingTiers : oneTimePricingTiers)[Number(selectedPackageIndex)]
-        : null; // Get the selected pricing tier based on the package index
+        : null;
 
     const handleSubmit = async () => {
-        // Validate contact method and value
         if (!contactMethod) {
             setError('Please select contact method');
             return;
@@ -100,10 +60,9 @@ function ContactForm() {
         }
 
         setError('');
-        setIsSubmitting(true); // Set submitting state to true
+        setIsSubmitting(true);
 
         try {
-            // Send data to the webhook
             const response = await fetch('https://anykind.app.n8n.cloud/webhook/191cc54c-fccc-458f-9a57-1c45f1183a15', {
                 method: 'POST',
                 headers: {
@@ -114,24 +73,24 @@ function ContactForm() {
                     email: contactMethod === 'email' ? contactValue : '',
                     telegram: contactMethod === 'telegram' ? contactValue : '',
                     pack: Number(selectedPackageIndex) + 1,
-                    url: boostType === 'weekly' ? username : tweetUrl,
+                    username: username,
                     boost_type: boostType,
                     utm_source: document.referrer || 'direct'
                 })
             });
 
             if (response.ok) {
-                setSubmitSuccess(true); // Set success state if submission is successful
-                setContactMethod(''); // Reset contact method
-                setContactValue(''); // Reset contact value
+                setSubmitSuccess(true);
+                setContactMethod('');
+                setContactValue('');
             } else {
-                throw new Error('Failed to submit'); // Throw error if submission fails
+                throw new Error('Failed to submit');
             }
         } catch (error) {
             console.error('Submission error:', error);
-            setError('Failed to submit. Please try again.'); // Set error message
+            setError('Failed to submit. Please try again.');
         } finally {
-            setIsSubmitting(false); // Reset submitting state
+            setIsSubmitting(false);
         }
     };
 
@@ -146,7 +105,7 @@ function ContactForm() {
                                 Your request has been submitted successfully. We will contact you shortly.
                             </div>
                             <button
-                                onClick={() => router.push('/services/x-boost#pricing')}
+                                onClick={() => router.push('/services/telegram-boost#pricing')}
                                 className="px-6 xs:px-8 py-3 xs:py-4 bg-[#1DA1F2] rounded-xl text-white font-bold text-sm xs:text-base hover:bg-[#1A91DA] transition-all"
                             >
                                 Back to packages
@@ -169,11 +128,11 @@ function ContactForm() {
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="h-5 w-1 bg-[#1DA1F2] rounded-full"></div>
                                     <div className="text-white text-sm xs:text-base font-bold uppercase tracking-wide">
-                                        {boostType === 'weekly' ? 'Your X Account' : 'Your Tweet URL'}
+                                        Your Telegram Username
                                     </div>
                                 </div>
                                 <div className="bg-white/5 rounded-xl px-4 py-3 text-white text-sm xs:text-base">
-                                    {boostType === 'weekly' ? username : tweetUrl}
+                                    {username}
                                 </div>
                             </div>
                             {selectedTier && (
@@ -186,18 +145,10 @@ function ContactForm() {
                                     </div>
                                     <div className="bg-white/5 rounded-xl px-4 py-3 flex justify-between items-center">
                                         <span className="text-white text-sm xs:text-base">
-                                            {selectedTier.replies} Replies + Likes + RT
-                                            {boostType === 'weekly' && Number(selectedPackageIndex) <= 1 && (
-                                                <span className="font-bold ml-1">every week</span>
-                                            )}
-                                            {selectedTier.topTierReplies &&
-                                                ` + ${selectedTier.topTierReplies} Top Tier Replies`}
-                                            {selectedTier.bonus && (
-                                                <span className="text-[#4CAF50] ml-2">+{selectedTier.bonus}% Bonus</span>
-                                            )}
+                                            {selectedTier.replies} Replies + Likes
                                         </span>
                                         <span className="text-white/50 text-sm xs:text-base">
-                                            ${selectedTier.price}{boostType === 'weekly' ? '/mo' : ''}
+                                            ${selectedTier.price}
                                         </span>
                                     </div>
                                 </div>
@@ -273,7 +224,7 @@ function ContactForm() {
 
                             {/* Back Button */}
                             <button
-                                onClick={() => router.push('/services/x-boost#pricing')}
+                                onClick={() => router.push('/services/telegram-boost#pricing')}
                                 className="w-full px-6 xs:px-8 py-3 xs:py-4 bg-transparent border border-white/10 rounded-xl text-white/70 font-medium text-sm xs:text-base hover:bg-white/5 transition-all"
                             >
                                 Back to packages
@@ -286,7 +237,6 @@ function ContactForm() {
     );
 }
 
-// Main ContactPage component with suspense for loading state
 export default function ContactPage() {
     return (
         <Suspense fallback={
@@ -304,7 +254,7 @@ export default function ContactPage() {
                 </div>
             </section>
         }>
-            <ContactForm /> {/* Render the contact form */}
+            <ContactForm />
         </Suspense>
     );
-}
+} 

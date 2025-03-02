@@ -4,32 +4,34 @@ import { useState } from 'react';
 import { Mail, MessageSquare, Send, ArrowRight, Shield, CheckCircle2 } from 'lucide-react';
 
 const ContactForm = () => {
-    const [contactMethod, setContactMethod] = useState<'email' | 'telegram'>('email');
-    const [contactValue, setContactValue] = useState('');
+    const [contactMethod, setContactMethod] = useState<'email' | 'telegram'>('email'); // State to track the selected contact method
+    const [contactValue, setContactValue] = useState(''); // State to store the contact input value
 
+    // Function to validate the input based on the selected contact method
     const validateInput = (): boolean => {
         if (!contactValue.trim()) {
-            return false;
+            return false; // Input cannot be empty
         }
 
         if (contactMethod === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for email validation
             if (!emailRegex.test(contactValue)) {
-                return false;
+                return false; // Invalid email format
             }
         }
 
         if (contactMethod === 'telegram') {
             if (!contactValue.startsWith('@')) {
-                return false;
+                return false; // Telegram handle must start with '@'
             }
         }
 
-        return true;
+        return true; // Input is valid
     };
 
+    // Function to handle form submission
     const handleSubmit = async () => {
-        if (!validateInput()) return;
+        if (!validateInput()) return; // Validate input before submission
 
         try {
             const response = await fetch('https://anykind.app.n8n.cloud/webhook/191cc54c-fccc-458f-9a57-1c45f1183a15', {
@@ -48,10 +50,11 @@ const ContactForm = () => {
 
             if (!response.ok) throw new Error('Failed to send message');
 
-            setContactValue('');
+            setContactValue(''); // Clear input field after successful submission
 
             // Reset success message after 3 seconds
             setTimeout(() => {
+                // Logic to reset success message can be added here
             }, 3000);
 
         } catch (error) {
@@ -76,7 +79,7 @@ const ContactForm = () => {
                 <div className="grid grid-cols-2 gap-3 xs:gap-4 mb-6 xs:mb-8">
                     <button
                         onClick={() => {
-                            setContactMethod('email');
+                            setContactMethod('email'); // Set contact method to email
                         }}
                         className={`flex items-center justify-center gap-2 xs:gap-3 p-3 xs:p-4 rounded-xl transition-all ${contactMethod === 'email'
                             ? 'bg-[#1DA1F2]/20 border-[#1DA1F2]/50 text-white'
@@ -88,7 +91,7 @@ const ContactForm = () => {
                     </button>
                     <button
                         onClick={() => {
-                            setContactMethod('telegram');
+                            setContactMethod('telegram'); // Set contact method to Telegram
                         }}
                         className={`flex items-center justify-center gap-2 xs:gap-3 p-3 xs:p-4 rounded-xl transition-all ${contactMethod === 'telegram'
                             ? 'bg-[#1DA1F2]/20 border-[#1DA1F2]/50 text-white'
@@ -110,7 +113,7 @@ const ContactForm = () => {
                                 }`}
                             value={contactValue}
                             onChange={(e) => {
-                                setContactValue(e.target.value);
+                                setContactValue(e.target.value); // Update contact value on input change
                             }}
                         />
                         <Send className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 xs:w-5 xs:h-5 text-[#1DA1F2]" />
@@ -119,7 +122,7 @@ const ContactForm = () => {
 
                 {/* Submit Button */}
                 <button
-                    onClick={handleSubmit}
+                    onClick={handleSubmit} // Handle form submission
                     className={`w-full group px-6 xs:px-8 py-2.5 xs:py-3 rounded-xl text-white font-bold text-sm xs:text-base flex items-center justify-center gap-2 transition-all shadow-xl ${contactMethod === 'email' ? 'bg-[#1DA1F2] shadow-[#1DA1F2]/20 hover:bg-[#1A91DA] hover:shadow-[#1DA1F2]/30' : 'bg-[#1DA1F2] shadow-[#1DA1F2]/20 hover:bg-[#1A91DA] hover:shadow-[#1DA1F2]/30'}`}
                 >
                     {contactMethod === 'email' ? (

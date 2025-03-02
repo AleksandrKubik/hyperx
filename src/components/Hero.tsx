@@ -18,7 +18,7 @@ export default function Hero() {
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [exitComplete, setExitComplete] = useState(false);
 
-    // Мемоизируем socialServices
+    // Memoize social services to avoid unnecessary re-renders
     const socialServices = useMemo(() => [
         {
             id: 'telegram',
@@ -50,21 +50,21 @@ export default function Hero() {
     ], []);
 
     useEffect(() => {
-        // Обновленная последовательность анимаций
+        // Updated animation sequence for showing elements
         setTimeout(() => {
-            setShowTitle(true); // Заголовок
+            setShowTitle(true); // Show title
 
             setTimeout(() => {
-                setShowDescription(true); // Описание
+                setShowDescription(true); // Show description
 
                 setTimeout(() => {
-                    setShowCards(true); // Карточки
+                    setShowCards(true); // Show service cards
 
                     setTimeout(() => {
-                        setShowIcons(true); // Иконки
+                        setShowIcons(true); // Show icons
 
                         setTimeout(() => {
-                            setShowButtons(true); // Кнопки
+                            setShowButtons(true); // Show buttons
                         }, 400);
                     }, 500);
                 }, 500);
@@ -76,18 +76,18 @@ export default function Hero() {
         setIsTransitioning(true);
         setSelectedService(service.name);
 
-        setShowButtons(false);
+        setShowButtons(false); // Hide buttons during transition
 
         setTimeout(() => {
-            setShowDescription(false);
+            setShowDescription(false); // Hide description
         }, 200);
 
         setTimeout(() => {
-            setExitComplete(true);
+            setExitComplete(true); // Mark exit as complete
         }, 400);
 
         setTimeout(() => {
-            router.push(service.href);
+            router.push(service.href); // Navigate to the selected service
         }, 1500);
     };
 
@@ -95,7 +95,7 @@ export default function Hero() {
         <section className="relative min-h-[calc(100vh-64px)] flex items-center py-20">
             <div className="container mx-auto px-4 relative">
                 <div className="max-w-3xl mx-auto text-center relative">
-                    {/* Заголовок */}
+                    {/* Title Section */}
                     <div
                         className={`max-w-3xl mx-auto text-center mb-20 relative 
                             transition-all duration-700 ease-out
@@ -121,9 +121,9 @@ export default function Hero() {
                     </div>
                 </div>
 
-                {/* Сетка сервисов */}
+                {/* Service Grid */}
                 <div className="flex flex-col md:flex-row justify-center items-center gap-8 max-w-7xl mx-auto">
-                    {/* В мобильной версии сначала X, затем Telegram и YouTube */}
+                    {/* Mobile version: X first, then Telegram and YouTube */}
                     <div className="md:hidden w-full">
                         {socialServices.filter(service => service.id === 'x').map((service: typeof socialServices[number]) => (
                             <div
@@ -233,7 +233,7 @@ export default function Hero() {
                         ))}
                     </div>
 
-                    {/* Десктопная версия */}
+                    {/* Desktop version */}
                     <div className="hidden md:flex justify-center items-center gap-8">
                         {socialServices.map((service, index) => (
                             <div
@@ -305,7 +305,7 @@ export default function Hero() {
                                     </Button>
                                 </div>
 
-                                {/* Эффект свечения в цвет сервиса */}
+                                {/* Glowing effect in service color */}
                                 <div className="absolute inset-0 -z-10 transition-opacity duration-500 opacity-0 group-hover:opacity-100">
                                     <div
                                         className="absolute inset-0 blur-2xl rounded-2xl"

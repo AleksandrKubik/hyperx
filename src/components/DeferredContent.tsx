@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Оптимизированные динамические импорты
+// Optimized dynamic imports for components
 const PricingCard = dynamic(() => import('@/components/PricingCard'), {
     loading: () => <div className="h-96 bg-gray-100/5 rounded-lg animate-pulse" />,
     ssr: false
@@ -34,23 +34,24 @@ const FooterDynamic = dynamic(() => import('@/components/Footer'), {
     ssr: false
 });
 
+// Animation variants for section transitions
 const sectionVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
 };
 
 interface DeferredContentProps {
-    sections: string[]; // Массив названий секций, которые нужно отобразить
+    sections: string[]; // Array of section names to display
 }
 
 export const DeferredContent = ({ sections }: DeferredContentProps) => {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
+        setMounted(true); // Set mounted to true after component mounts
     }, []);
 
-    if (!mounted) return null;
+    if (!mounted) return null; // Prevent rendering until mounted
 
     return (
         <div className="space-y-16 md:space-y-24">

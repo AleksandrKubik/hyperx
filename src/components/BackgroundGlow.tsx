@@ -15,60 +15,67 @@ const BackgroundGlow: React.FC = () => {
     const animationFrameId = useRef<number | undefined>(undefined);
 
     useEffect(() => {
+        // Handle window resize to determine if the device is mobile
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
         };
 
-        handleResize();
+        handleResize(); // Initial check for mobile
 
-        window.addEventListener('resize', handleResize);
+        window.addEventListener('resize', handleResize); // Add resize event listener
 
+        // Show the glow effect after a short delay
         setTimeout(() => {
             setIsVisible(true);
         }, 50);
 
+        // Stop loading after 1 second
         setTimeout(() => {
             setIsLoading(false);
         }, 1000);
 
         return () => {
-            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('resize', handleResize); // Clean up resize listener
             if (animationFrameId.current) {
-                cancelAnimationFrame(animationFrameId.current);
+                cancelAnimationFrame(animationFrameId.current); // Cancel animation frame if it exists
             }
         };
     }, []);
 
     useEffect(() => {
+        // Skip mouse movement tracking if loading or on mobile
         if (isLoading || isMobile) return;
 
+        // Handle mouse movement to update target position
         const handleMouseMove = (e: MouseEvent) => {
             const { clientX, clientY } = e;
             const { innerWidth, innerHeight } = window;
 
-            targetX.current = (clientX / innerWidth) * 100;
-            targetY.current = (clientY / innerHeight) * 100;
+            targetX.current = (clientX / innerWidth) * 100; // Calculate target X position
+            targetY.current = (clientY / innerHeight) * 100; // Calculate target Y position
         };
 
+        // Animation loop to smoothly transition the glow effect
         const animate = () => {
-            currentX.current += (targetX.current - currentX.current) * 0.08;
-            currentY.current += (targetY.current - currentY.current) * 0.08;
+            currentX.current += (targetX.current - currentX.current) * 0.08; // Smooth transition for X
+            currentY.current += (targetY.current - currentY.current) * 0.08; // Smooth transition for Y
 
             if (glowRef.current) {
+                // Update CSS variables for glow effect
                 glowRef.current.style.setProperty('--mouse-x', `${currentX.current}%`);
                 glowRef.current.style.setProperty('--mouse-y', `${currentY.current}%`);
             }
 
-            animationFrameId.current = requestAnimationFrame(animate);
+            animationFrameId.current = requestAnimationFrame(animate); // Request next animation frame
         };
 
-        window.addEventListener('mousemove', handleMouseMove);
-        animate();
+        window.addEventListener('mousemove', handleMouseMove); // Add mouse move event listener
+        animate(); // Start the animation loop
 
         return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mousemove', handleMouseMove); // Clean up mouse move listener
             if (animationFrameId.current) {
-                cancelAnimationFrame(animationFrameId.current);
+                cancelAnimationFrame(animationFrameId.current); // Cancel animation frame if it exists
             }
         };
     }, [isLoading, isMobile]);

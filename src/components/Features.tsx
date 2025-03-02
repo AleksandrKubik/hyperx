@@ -1,5 +1,6 @@
 import { Shield, Zap, Clock, Users, MessageCircle, TrendingUp } from 'lucide-react';
 
+// Define the core features of the service
 const features = [
   {
     icon: MessageCircle,

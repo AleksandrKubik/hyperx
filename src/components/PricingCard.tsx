@@ -5,6 +5,7 @@ import { Link2, ArrowRight, Mail, MessageSquare, CheckCircle2 } from 'lucide-rea
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
+// Define the structure of a pricing tier
 interface PricingTier {
   replies: number;
   price: number;
@@ -18,6 +19,7 @@ interface PricingTier {
 //   price: 0,
 // };
 
+// Define weekly pricing tiers
 const weeklyPricingTiers: PricingTier[] = [
   // {
   //   ...freeTier,
@@ -45,6 +47,7 @@ const weeklyPricingTiers: PricingTier[] = [
   },
 ];
 
+// Define one-time pricing tiers
 const oneTimePricingTiers: PricingTier[] = [
   // {
   //   ...freeTier,
@@ -69,6 +72,7 @@ const oneTimePricingTiers: PricingTier[] = [
   },
 ];
 
+// Define the structure of post data
 interface PostData {
   image?: string;
   title?: string;
@@ -87,8 +91,10 @@ export default function PricingCardV2() {
   const [error, setError] = useState('');
   const [boostType, setBoostType] = useState<'weekly' | 'onetime'>('weekly');
 
+  // Determine current pricing tiers based on boost type
   const currentPricingTiers = boostType === 'weekly' ? weeklyPricingTiers : oneTimePricingTiers;
 
+  // Validate X username format
   const validateXUsername = (username: string): boolean => {
     const cleanUsername = username.replace(/^@/, '');
     const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{3,14}$/;
@@ -96,12 +102,14 @@ export default function PricingCardV2() {
     return usernameRegex.test(cleanUsername);
   };
 
+  // Validate tweet URL format
   const validateTweetUrl = (url: string): boolean => {
     const tweetUrlRegex = /^https?:\/\/(twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/\d+/i;
 
     return tweetUrlRegex.test(url);
   };
 
+  // Handle submission of step 1
   const handleSubmitStep1 = () => {
     setError('');
 
@@ -126,6 +134,7 @@ export default function PricingCardV2() {
 
       const cleanUsername = tweetUrl.replace(/^@/, '');
 
+      // Redirect to contact page with parameters
       router.push(`/services/x-boost/contact?username=${encodeURIComponent(cleanUsername)}&package=${selectedPackage}&type=weekly`);
 
     } else {
@@ -134,15 +143,18 @@ export default function PricingCardV2() {
         return;
       }
 
+      // Redirect to contact page with parameters
       router.push(`/services/x-boost/contact?url=${encodeURIComponent(tweetUrl)}&package=${selectedPackage}&type=onetime`);
     }
   };
 
+  // Handle input change for tweet URL
   const handleInputChange = (value: string) => {
     setError('');
     setTweetUrl(value);
   };
 
+  // Handle submission of step 2
   const handleSubmitStep2 = async () => {
     if (!contactMethod) {
       setError('Please select contact method');
@@ -181,7 +193,7 @@ export default function PricingCardV2() {
         throw new Error('Failed to submit form');
       }
 
-      setStep(3);
+      setStep(3); // Move to the next step
       setContactValue('');
       setError('');
 
@@ -193,12 +205,14 @@ export default function PricingCardV2() {
 
   const selectedTier = selectedPackage !== null ? currentPricingTiers[selectedPackage] : null;
 
+  // Get input label based on boost type
   const getInputLabel = () => {
     return boostType === 'weekly'
       ? 'Paste name of your X account'
       : 'Paste a link to your tweet';
   };
 
+  // Get input placeholder based on boost type
   const getInputPlaceholder = () => {
     return boostType === 'weekly'
       ? 'Enter your X account name (e.g. @username)'

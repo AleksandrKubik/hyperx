@@ -5,9 +5,9 @@ export default function Footer() {
     return (
         <footer className="w-full border-t border-white/10 bg-black/20 backdrop-blur-sm">
             <div className="container mx-auto px-4 py-6">
-                {/* Мобильная версия */}
+                {/* Mobile version */}
                 <div className="flex flex-col md:hidden">
-                    {/* Платежные системы и Norton Security */}
+                    {/* Payment systems and Norton Security */}
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <Image
                             src="/icons/payment_icons/visa/Size=24.svg"
@@ -60,11 +60,11 @@ export default function Footer() {
                         />
                     </div>
 
-                    {/* Правовая информация */}
+                    {/* Legal information */}
                     <div className="text-sm text-neutral-400 text-center">
                         <span>© 2025 HypeX. All rights reserved.</span>
                     </div>
-                    {/* Ссылки */}
+                    {/* Links */}
                     <div className="flex justify-center text-center gap-2 mt-2">
                         <Link href="/terms" className="text-emerald-500 hover:text-emerald-400">
                             Terms Of Service
@@ -76,9 +76,9 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Десктопная версия */}
+                {/* Desktop version */}
                 <div className="hidden md:flex justify-between items-center">
-                    {/* Платежные системы */}
+                    {/* Payment systems */}
                     <div className="flex items-center gap-3">
                         <Image
                             src="/icons/payment_icons/visa/Size=24.svg"
@@ -122,12 +122,12 @@ export default function Footer() {
                         />
                     </div>
 
-                    {/* Правовая информация */}
+                    {/* Legal information */}
                     <div className="text-sm text-neutral-400 flex items-center gap-2">
                         <span>© 2025 HypeX. All rights reserved.</span>
                     </div>
 
-                    {/* Ссылки */}
+                    {/* Links */}
                     <div className="flex items-center gap-2">
                         <Link href="/terms" className="text-emerald-500 hover:text-emerald-400">
                             Terms Of Service

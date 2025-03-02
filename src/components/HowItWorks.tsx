@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { FileText, CreditCard, Send, CheckCircle2 } from 'lucide-react';
 
+// Define the steps of the process
 const steps = [
   {
     icon: FileText,
@@ -37,6 +38,7 @@ const steps = [
   }
 ];
 
+// Array of comments for display
 const comments = [
   "/post_components/Comment_1.svg",
   "/post_components/Comment_2.svg",
@@ -48,6 +50,7 @@ const comments = [
   "/post_components/Comment_8.svg"
 ];
 
+// Array of posts for display
 const posts = [
   "/post_components/Post_1.svg",
   "/post_components/Post_2.svg",
@@ -60,6 +63,7 @@ const posts = [
 ];
 
 export default function HowItWorks() {
+  // States to manage visibility of comments and posts
   const [visibleComments, setVisibleComments] = useState<Array<{ id: number; src: string }>>([]);
   const [currentPostIndex, setCurrentPostIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -67,7 +71,7 @@ export default function HowItWorks() {
   const hasAnimated = useRef(false);
 
   useEffect(() => {
-    // Более надежная проверка видимости
+    // Check visibility of the section on scroll
     const checkVisibility = () => {
       if (!sectionRef.current || hasAnimated.current) return;
 
@@ -76,19 +80,16 @@ export default function HowItWorks() {
 
       if (isInViewport) {
         setIsVisible(true);
-        hasAnimated.current = true;
+        hasAnimated.current = true; // Set flag to prevent repeated animation
         window.removeEventListener('scroll', checkVisibility);
       }
     };
 
-    // Проверяем видимость при монтировании
-    checkVisibility();
+    checkVisibility(); // Check visibility on mount
 
-    // Добавляем слушатель прокрутки
     window.addEventListener('scroll', checkVisibility, { passive: true });
 
-    // Дополнительно проверяем через небольшую задержку для мобильных устройств
-    const timeoutId = setTimeout(checkVisibility, 50);
+    const timeoutId = setTimeout(checkVisibility, 50); // Additional check after 50 ms
 
     return () => {
       window.removeEventListener('scroll', checkVisibility);
@@ -97,12 +98,12 @@ export default function HowItWorks() {
   }, []);
 
   useEffect(() => {
+    // Start animating comments and posts when the section becomes visible
     if (!isVisible) return;
 
-    // Добавляем небольшую задержку перед стартом анимации
     const startTimeout = setTimeout(() => {
-      changePost();
-      addComments();
+      changePost(); // Change the post
+      addComments(); // Add comments
     }, 100);
 
     return () => clearTimeout(startTimeout);
@@ -110,13 +111,12 @@ export default function HowItWorks() {
 
   const addComments = () => {
     let commentIndex = 0;
-
-    // Добавляем первый комментарий сразу
     setVisibleComments([{
       id: Date.now(),
       src: comments[0]
     }]);
 
+    // Interval for adding comments
     const commentInterval = setInterval(() => {
       commentIndex++;
 
@@ -126,6 +126,7 @@ export default function HowItWorks() {
       }
 
       setVisibleComments(prev => {
+        // Check to avoid duplicate comments
         if (prev.some(comment => comment.src === comments[commentIndex])) {
           return prev;
         }
@@ -134,21 +135,22 @@ export default function HowItWorks() {
           src: comments[commentIndex]
         }];
       });
-    }, 700);
+    }, 700); // Add comments every 700 ms
 
     return () => clearInterval(commentInterval);
   };
 
   const changePost = () => {
     let postIndex = 0;
+    // Interval for changing posts
     const postInterval = setInterval(() => {
       if (postIndex >= posts.length - 1) {
         clearInterval(postInterval);
         return;
       }
-      setCurrentPostIndex(prev => (prev + 1) % posts.length);
+      setCurrentPostIndex(prev => (prev + 1) % posts.length); // Cycle through posts
       postIndex++;
-    }, 700);
+    }, 700); // Change posts every 700 ms
 
     return () => clearInterval(postInterval);
   };
@@ -178,7 +180,7 @@ export default function HowItWorks() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row">
           <div className="flex-1">
             <div className="grid grid-cols-1 gap-4 xs:gap-6 md:gap-8 relative">
-              {/* Connecting Line */}
+              {/* Connecting Line between steps */}
               <div className="md:block absolute left-1/2 top-0 h-full w-0.5 bg-gradient-to-b from-[#1DA1F2]/0 via-[#1DA1F2]/50 to-[#1DA1F2]/0" />
 
               {steps.map((step, index) => (
